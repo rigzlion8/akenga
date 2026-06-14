@@ -83,6 +83,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       {
+        rel: "icon",
+        type: "image/svg+xml",
+        href: "/favicon.svg",
+      },
+      {
         rel: "preconnect",
         href: "https://fonts.googleapis.com",
       },
