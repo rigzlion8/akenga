@@ -1,0 +1,67 @@
+import { pgTable, text, timestamp, real, boolean, integer, serial } from "drizzle-orm/pg-core";
+
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  tag: text("tag"),
+  price: text("price").notNull(),
+  description: text("description"),
+  imageUrl: text("image_url"),
+  inStock: boolean("in_stock").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const classes = pgTable("classes", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  style: text("style").notNull(),
+  level: text("level").notNull(),
+  description: text("description"),
+  imageUrl: text("image_url"),
+  capacity: integer("capacity").default(10),
+  price: text("price"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const exhibitions = pgTable("exhibitions", {
+  id: serial("id").primaryKey(),
+  tag: text("tag"),
+  title: text("title").notNull(),
+  description: text("description"),
+  artistName: text("artist_name"),
+  startDate: text("start_date"),
+  endDate: text("end_date"),
+  room: text("room"),
+  imageUrl: text("image_url"),
+  isLive: boolean("is_live").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const publications = pgTable("publications", {
+  id: serial("id").primaryKey(),
+  tag: text("tag"),
+  title: text("title").notNull(),
+  excerpt: text("excerpt"),
+  content: text("content"),
+  imageUrl: text("image_url"),
+  publishedAt: text("published_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const uploads = pgTable("uploads", {
+  id: serial("id").primaryKey(),
+  filename: text("filename").notNull(),
+  originalName: text("original_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  size: integer("size").notNull(),
+  url: text("url").notNull(),
+  width: integer("width"),
+  height: integer("height"),
+  alt: text("alt"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
