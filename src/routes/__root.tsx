@@ -178,6 +178,16 @@ function SiteFooter() {
       </div>
       <div className="border-t border-border/60 py-6 text-center text-xs tracking-[0.2em] uppercase text-muted-foreground">
         © {new Date().getFullYear()} Akenga Arts Centre
+        <span className="mx-3 text-border">|</span>
+        Powered by{" "}
+        <a
+          href="https://maishatech.co.ke"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent hover:text-foreground transition-colors"
+        >
+          MaishaTech
+        </a>
       </div>
     </footer>
   );

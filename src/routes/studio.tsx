@@ -14,13 +14,13 @@ export const Route = createFileRoute("/studio")({
 
 function Studio() {
   const live = [
-    { name: "Amara Okafor", title: "Painting Atelier", desc: "Oil on canvas — an abstract landscape series taking shape across the season.", status: "Live", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/d362477fe_generated_4d64aca1.png" },
-    { name: "Zuri Mwangi", title: "Ceramics Workshop", desc: "Wheel-thrown vessels marrying traditional silhouette with contemporary glaze.", status: "In Session", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/b10c5e500_generated_ff1f7877.png" },
+    { name: "Amara Okafor", title: "Painting Atelier", desc: "Oil on canvas — an abstract landscape series taking shape across the season.", status: "Live", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781460963/q9cxxkpmmmzggui9yhjg.png" },
+    { name: "Zuri Mwangi", title: "Ceramics Workshop", desc: "Wheel-thrown vessels marrying traditional silhouette with contemporary glaze.", status: "In Session", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781460977/haskvqaygihriydg6slq.png" },
   ];
   const shows = [
-    { tag: "Collective Exhibition", title: "Echoes of the Savanna", desc: "A wide-ranging survey of contemporary sculpture exploring land, memory, and identity.", date: "June 1 – August 30, 2026", room: "Main Gallery", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/07b57ce5f_generated_7a1b3c09.png" },
-    { tag: "Kwame Asante", title: "Chromatic Resonance", desc: "Large-scale colour-field paintings questioning the emotional weight of pigment.", date: "July 15 – September 15, 2026", room: "East Wing", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/4ad0461a3_generated_dd862622.png" },
-    { tag: "Nalini Sharma", title: "Threads of Ancestry", desc: "Mixed-media tapestries braiding heritage craft with digital processes.", date: "May 1 – July 30, 2026", room: "Textile Pavilion", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/81f7d33e9_generated_e3d99039.png" },
+    { tag: "Collective Exhibition", title: "Echoes of the Savanna", desc: "A wide-ranging survey of contemporary sculpture exploring land, memory, and identity.", date: "June 1 – August 30, 2026", room: "Main Gallery", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781460985/lggaryxvsnrh5bhgmqhj.png" },
+    { tag: "Kwame Asante", title: "Chromatic Resonance", desc: "Large-scale colour-field paintings questioning the emotional weight of pigment.", date: "July 15 – September 15, 2026", room: "East Wing", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781460992/cwjfj8n0xvv1okhxmrny.png" },
+    { tag: "Nalini Sharma", title: "Threads of Ancestry", desc: "Mixed-media tapestries braiding heritage craft with digital processes.", date: "May 1 – July 30, 2026", room: "Textile Pavilion", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461000/xvy2gyqbhrzpesx6yh74.png" },
   ];
   return (
     <>

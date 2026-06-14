@@ -14,10 +14,10 @@ export const Route = createFileRoute("/classes")({
 
 function Classes() {
   const instruments = [
-    { name: "Piano", style: "Classical & Contemporary", level: "All Levels", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/b459e140c_generated_59166026.png" },
-    { name: "Kora", style: "West African Tradition", level: "Beginner to Intermediate", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/33e06e0b2_generated_efb37de4.png" },
-    { name: "Violin", style: "Classical Strings", level: "All Levels", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/d789cd7f5_generated_d0de5c2e.png" },
-    { name: "Drums", style: "African Percussion", level: "All Levels", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/7ee8da8bf_generated_7aa23759.png" },
+    { name: "Piano", style: "Classical & Contemporary", level: "All Levels", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461217/y7ggsqskn0aeyqq9wy8x.png" },
+    { name: "Kora", style: "West African Tradition", level: "Beginner to Intermediate", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461235/aqhdoro9tjp46kapg3r3.png" },
+    { name: "Violin", style: "Classical Strings", level: "All Levels", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461247/vu5og3b9hypxukmwadk0.png" },
+    { name: "Drums", style: "African Percussion", level: "All Levels", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461253/qja11hhfqn2fdbyefhzl.png" },
   ];
   return (
     <>

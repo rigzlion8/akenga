@@ -12,10 +12,9 @@ function getCloudinaryConfig() {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_NAME;
   const apiKey = process.env.CLOUDINARY_API_KEY || process.env.CLOUDINARY_KEY;
   const apiSecret = process.env.CLOUDINARY_API_SECRET || process.env.CLOUDINARY_SECRET;
-  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET || "akenga";
 
   if (cloudName && apiKey && apiSecret) {
-    return { cloudName, apiKey, apiSecret, uploadPreset };
+    return { cloudName, apiKey, apiSecret };
   }
   return null;
 }
@@ -56,7 +55,13 @@ async function saveToCloudinary(
   const formData = new FormData();
   const blob = new Blob([new Uint8Array(buffer)], { type: mimeType });
   formData.append("file", blob, originalName);
-  formData.append("upload_preset", config.uploadPreset);
+  formData.append("api_key", config.apiKey);
+
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  formData.append("timestamp", timestamp);
+
+  const signature = await generateCloudinarySignature(timestamp, config.apiSecret);
+  formData.append("signature", signature);
 
   const res = await fetch(`https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`, {
     method: "POST",
@@ -67,6 +72,13 @@ async function saveToCloudinary(
 
   const data = (await res.json()) as { secure_url: string; public_id: string };
   return { url: data.secure_url, filename: data.public_id };
+}
+
+async function generateCloudinarySignature(timestamp: string, apiSecret: string): Promise<string> {
+  const { createHash } = await import("node:crypto");
+  const hash = createHash("sha1");
+  hash.update(`timestamp=${timestamp}${apiSecret}`);
+  return hash.digest("hex");
 }
 
 async function saveToS3(

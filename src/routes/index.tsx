@@ -20,9 +20,9 @@ function Index() {
     "Venice Biennale", "Art Basel",
   ];
   const pubs = [
-    { tag: "Market", date: "March 2026", title: "The Rise of Artisanal Commerce in East Africa", excerpt: "How curated craft economies are reshaping the bond between maker and collector.", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/07b57ce5f_generated_7a1b3c09.png" },
-    { tag: "Exhibition", date: "April 2026", title: "Echoes of the Savanna — Opening Notes", excerpt: "Inside a sweeping group survey of contemporary sculpture grounded in land and memory.", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/4ad0461a3_generated_dd862622.png" },
-    { tag: "Studio", date: "February 2026", title: "On Pigment, Patience and Practice", excerpt: "An afternoon in the painting atelier with resident artist Amara Okafor.", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/81f7d33e9_generated_e3d99039.png" },
+    { tag: "Market", date: "March 2026", title: "The Rise of Artisanal Commerce in East Africa", excerpt: "How curated craft economies are reshaping the bond between maker and collector.", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781460985/lggaryxvsnrh5bhgmqhj.png" },
+    { tag: "Exhibition", date: "April 2026", title: "Echoes of the Savanna — Opening Notes", excerpt: "Inside a sweeping group survey of contemporary sculpture grounded in land and memory.", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781460992/cwjfj8n0xvv1okhxmrny.png" },
+    { tag: "Studio", date: "February 2026", title: "On Pigment, Patience and Practice", excerpt: "An afternoon in the painting atelier with resident artist Amara Okafor.", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461000/xvy2gyqbhrzpesx6yh74.png" },
   ];
   const rooms = [
     { n: "01", title: "The Studio", sub: "Witness creation in real time", to: "/studio" as const },
@@ -34,7 +34,7 @@ function Index() {
       {/* HERO */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <img
-          src="https://media.base44.com/images/public/6a0c31212300475d0c053d32/b2b5df26d_generated_fcd74f4d.png"
+          src="https://res.cloudinary.com/dsjptulx6/image/upload/v1781461205/r2xhlg762xg2rgps3dbx.png"
           alt="Akenga Arts Centre studio interior"
           className="absolute inset-0 w-full h-full object-cover"
         />

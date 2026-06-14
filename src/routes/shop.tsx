@@ -16,16 +16,16 @@ export const Route = createFileRoute("/shop")({
 type Cat = "All" | "Fine Art" | "Footwear" | "Apparel" | "Supplies" | "Stationery" | "Decor" | "Naturalia";
 
 const products: { name: string; cat: Exclude<Cat,"All">; tag: string; price: string; img: string }[] = [
-  { name: "Handwoven Raffia Sandals", cat: "Footwear", tag: "Artisan Craft", price: "KES 4,500", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/d98610307_generated_1967b47e.png" },
-  { name: "Abstract Landscape — Oil on Canvas", cat: "Fine Art", tag: "Original", price: "KES 85,000", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/3d8c2ffdd_generated_6be9c1db.png" },
-  { name: "Brushstroke Collection Tee", cat: "Apparel", tag: "Limited Edition", price: "KES 2,800", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/a3ca1f3a1_generated_b6e62e9d.png" },
-  { name: "Botanical Art Postcard Set", cat: "Stationery", tag: "Best Seller", price: "KES 1,200", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/85b1180c2_generated_b0fc8667.png" },
-  { name: "Professional Oak Art Easel", cat: "Supplies", tag: "Studio Essential", price: "KES 18,500", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/58c7f8093_generated_9ee5b8ba.png" },
-  { name: "Artisan Honey Bee Hive", cat: "Naturalia", tag: "Spotlight", price: "KES 12,000", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/47f2fea83_generated_f1394864.png" },
-  { name: "Artist Brush Collection", cat: "Supplies", tag: "Professional", price: "KES 6,500", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/c8b366632_generated_29d11710.png" },
-  { name: "Geometric Ceramic Vase", cat: "Decor", tag: "Handmade", price: "KES 9,800", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/e27237798_generated_c578948a.png" },
-  { name: "Leather-Bound Sketchbook", cat: "Stationery", tag: "Essential", price: "KES 3,200", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/52321f6f6_generated_1b10c60d.png" },
-  { name: "Woven Textile Art Panel", cat: "Fine Art", tag: "Heritage", price: "KES 42,000", img: "https://media.base44.com/images/public/6a0c31212300475d0c053d32/6a2d5ef9d_generated_bca08d06.png" },
+  { name: "Handwoven Raffia Sandals", cat: "Footwear", tag: "Artisan Craft", price: "KES 4,500", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461009/i62zn4pgkgfa2yljogxw.png" },
+  { name: "Abstract Landscape — Oil on Canvas", cat: "Fine Art", tag: "Original", price: "KES 85,000", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461023/pfu7phtdjksuqy15nmow.png" },
+  { name: "Brushstroke Collection Tee", cat: "Apparel", tag: "Limited Edition", price: "KES 2,800", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461033/zrlmgg0ffm3fvvugvwez.png" },
+  { name: "Botanical Art Postcard Set", cat: "Stationery", tag: "Best Seller", price: "KES 1,200", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461040/nixvd2jjypmr5ve7mdev.png" },
+  { name: "Professional Oak Art Easel", cat: "Supplies", tag: "Studio Essential", price: "KES 18,500", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461046/a60u2bbxqqutpjif136w.png" },
+  { name: "Artisan Honey Bee Hive", cat: "Naturalia", tag: "Spotlight", price: "KES 12,000", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461057/ywt3wsbhm2iq8zpnptv1.png" },
+  { name: "Artist Brush Collection", cat: "Supplies", tag: "Professional", price: "KES 6,500", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461074/h6jjfzreuhgmurrxrfiq.png" },
+  { name: "Geometric Ceramic Vase", cat: "Decor", tag: "Handmade", price: "KES 9,800", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461155/y8nkid2iv67qihxzbsm9.png" },
+  { name: "Leather-Bound Sketchbook", cat: "Stationery", tag: "Essential", price: "KES 3,200", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461165/ah2olg2tipnhmaoq156v.png" },
+  { name: "Woven Textile Art Panel", cat: "Fine Art", tag: "Heritage", price: "KES 42,000", img: "https://res.cloudinary.com/dsjptulx6/image/upload/v1781461178/siwmencqpor9f4y8jnmb.png" },
 ];
 
 const cats: Cat[] = ["All","Fine Art","Footwear","Apparel","Supplies","Stationery","Decor","Naturalia"];
@@ -94,7 +94,7 @@ function Shop() {
           <p className="font-serif text-3xl mt-1">KES 12,000</p>
         </div>
         <div className="aspect-[4/5] overflow-hidden bg-muted">
-          <img src="https://media.base44.com/images/public/6a0c31212300475d0c053d32/47f2fea83_generated_f1394864.png" alt="Artisan Bee Hive" className="w-full h-full object-cover" />
+          <img src="https://res.cloudinary.com/dsjptulx6/image/upload/v1781461057/ywt3wsbhm2iq8zpnptv1.png" alt="Artisan Bee Hive" className="w-full h-full object-cover" />
         </div>
       </section>
     </>
