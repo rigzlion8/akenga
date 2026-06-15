@@ -3,10 +3,7 @@ import {
   Outlet,
   Link,
   redirect,
-  useNavigate,
-  useRouter,
 } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Sidebar,
   SidebarContent,
@@ -24,26 +21,23 @@ import {
 } from "@/components/ui/sidebar";
 import { Boxes, FolderTree, Users, LayoutDashboard, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, logout } from "@/lib/api";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [{ title: "Admin — Akenga Arts Centre" }],
   }),
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async () => {
     if (typeof window === "undefined") return {};
-
-    if (location.pathname === "/admin/login") return {};
-
     const token = localStorage.getItem("auth_token");
-    if (!token) throw redirect({ to: "/admin/login" });
-
+    if (!token) throw redirect({ to: "/login" });
     try {
       const user = await getCurrentUser({ data: { token } });
-      if (!user) throw redirect({ to: "/admin/login" });
+      if (!user) throw redirect({ to: "/login" });
       return { user };
     } catch {
-      throw redirect({ to: "/admin/login" });
+      throw redirect({ to: "/login" });
     }
   },
   component: AdminLayout,
@@ -51,12 +45,6 @@ export const Route = createFileRoute("/admin")({
 
 function AdminLayout() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const router = useRouter();
-  const pathname = router.state.location.pathname;
-
-  const isLoginPage = pathname === "/admin/login";
-
   const { data: user, isLoading } = useQuery({
     queryKey: ["auth", "current"],
     queryFn: async () => {
@@ -68,18 +56,10 @@ function AdminLayout() {
         return null;
       }
     },
-    enabled: typeof window !== "undefined" && !isLoginPage,
+    enabled: typeof window !== "undefined",
     retry: false,
     staleTime: 5 * 60 * 1000,
   });
-
-  if (isLoginPage) {
-    return (
-      <main className="min-h-screen">
-        <Outlet />
-      </main>
-    );
-  }
 
   if (isLoading) {
     return (
@@ -90,9 +70,6 @@ function AdminLayout() {
   }
 
   if (!user) {
-    if (typeof window !== "undefined") {
-      navigate({ to: "/admin/login" });
-    }
     return null;
   }
 
@@ -107,7 +84,7 @@ function AdminLayout() {
     localStorage.removeItem("auth_user");
     queryClient.clear();
     toast.success("Signed out");
-    navigate({ to: "/admin/login" });
+    window.location.href = "/login";
   };
 
   return (

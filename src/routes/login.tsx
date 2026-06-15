@@ -17,7 +17,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export const Route = createFileRoute("/admin/login")({
+export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Login — Akenga Admin" }] }),
   component: AdminLogin,
 });
