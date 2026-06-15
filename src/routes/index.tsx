@@ -43,7 +43,7 @@ function Index() {
         <div className="relative text-center px-6">
           <p className="eyebrow text-accent">Est. 2024 · Nairobi, Kenya</p>
           <h1 className="mt-6 font-serif text-5xl sm:text-7xl md:text-9xl tracking-[0.15em] text-background drop-shadow-lg">AKENGA</h1>
-          <p className="mt-6 font-serif italic text-lg md:text-2xl text-background/90">Where Art Breathes, Roots Love Culture</p>
+          <p className="mt-6 font-serif italic text-lg md:text-2xl text-background/90">Where Art Breathes, Roots | Love | Culture</p>
         </div>
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
           <p className="eyebrow text-background/70">Explore</p>
