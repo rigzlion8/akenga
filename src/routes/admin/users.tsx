@@ -1,25 +1,294 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Users } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2, Key } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { getUsers, createUser, updateUser, deleteUser, resetUserPassword } from "@/lib/api";
+
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : "";
+}
+
+const userFormSchema = z.object({
+  email: z.string().email("Valid email required"),
+  name: z.string().min(1, "Name is required"),
+  password: z.string().min(6, "Minimum 6 characters"),
+  role: z.string().optional(),
+});
+
+const editFormSchema = z.object({
+  email: z.string().email("Valid email required"),
+  name: z.string().min(1, "Name is required"),
+  role: z.string().optional(),
+});
+
+const passwordSchema = z.object({
+  password: z.string().min(6, "Minimum 6 characters"),
+});
 
 export const Route = createFileRoute("/admin/users")({
   component: AdminUsers,
 });
 
 function AdminUsers() {
+  const queryClient = useQueryClient();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [passwordUserId, setPasswordUserId] = useState<number | null>(null);
+
+  const token = getToken();
+
+  const { data: userList } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUsers({ data: { token } }),
+    enabled: !!token,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<any>({
+    resolver: zodResolver(editingId ? editFormSchema : userFormSchema),
+  });
+
+  const {
+    register: pwRegister,
+    handleSubmit: pwHandle,
+    reset: pwReset,
+    formState: { errors: pwErrors },
+  } = useForm<{ password: string }>({
+    resolver: zodResolver(passwordSchema),
+  });
+
+  const openCreate = () => {
+    setEditingId(null);
+    reset({ email: "", name: "", password: "", role: "admin" });
+    setSheetOpen(true);
+  };
+
+  const openEdit = (u: any) => {
+    setEditingId(u.id);
+    reset({ email: u.email, name: u.name, role: u.role });
+    setSheetOpen(true);
+  };
+
+  const openPassword = (u: any) => {
+    setPasswordUserId(u.id);
+    pwReset({ password: "" });
+    setPasswordOpen(true);
+  };
+
+  const onSubmit = async (data: any) => {
+    try {
+      if (editingId) {
+        await updateUser({ data: { token, id: editingId, email: data.email, name: data.name, role: data.role } });
+        toast.success("User updated");
+      } else {
+        await createUser({ data: { token, email: data.email, name: data.name, password: data.password, role: data.role } });
+        toast.success("User created");
+      }
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setSheetOpen(false);
+    } catch (e: any) {
+      toast.error(e.message || "Something went wrong");
+    }
+  };
+
+  const handleDelete = async (u: any) => {
+    if (!confirm(`Delete user "${u.name}"?`)) return;
+    try {
+      await deleteUser({ data: { token, id: u.id } });
+      toast.success("User deleted");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete");
+    }
+  };
+
+  const handlePassword = async (data: { password: string }) => {
+    if (!passwordUserId) return;
+    try {
+      await resetUserPassword({ data: { token, id: passwordUserId, password: data.password } });
+      toast.success("Password reset");
+      setPasswordOpen(false);
+      setPasswordUserId(null);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to reset password");
+    }
+  };
+
   return (
     <>
-      <h1 className="font-serif text-3xl md:text-5xl">Users</h1>
-      <p className="mt-2 text-muted-foreground text-sm">
-        User management for the admin panel.
-      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-serif text-3xl md:text-5xl">Users</h1>
+          <p className="mt-2 text-muted-foreground text-sm">
+            Manage admin accounts. Passwords are hashed with scrypt.
+          </p>
+        </div>
 
-      <div className="mt-10 flex flex-col items-center justify-center py-24 border border-dashed border-border rounded-xl">
-        <Users className="h-12 w-12 text-muted-foreground/40" />
-        <p className="mt-4 font-serif text-xl text-muted-foreground">Coming Soon</p>
-        <p className="mt-1 text-sm text-muted-foreground/60">
-          User management will be available in the next phase. This will include admin role management, invitations, and access control.
-        </p>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <Button onClick={openCreate} className="cursor-pointer">
+              <Plus className="h-4 w-4 mr-2" />
+              Add User
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
+            <SheetHeader className="mb-6">
+              <SheetTitle>{editingId ? "Edit User" : "Create User"}</SheetTitle>
+            </SheetHeader>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <div>
+                <Label htmlFor="email">Email *</Label>
+                <Input id="email" type="email" {...register("email")} placeholder="user@akenga.art" />
+                {errors.email && <p className="text-xs text-destructive mt-1">{errors.email.message as string}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="name">Name *</Label>
+                <Input id="name" {...register("name")} placeholder="Full name" />
+                {errors.name && <p className="text-xs text-destructive mt-1">{errors.name.message as string}</p>}
+              </div>
+
+              {!editingId && (
+                <div>
+                  <Label htmlFor="password">Password *</Label>
+                  <Input id="password" type="password" {...register("password")} placeholder="Minimum 6 characters" />
+                  {errors.password && <p className="text-xs text-destructive mt-1">{errors.password.message as string}</p>}
+                </div>
+              )}
+
+              <div>
+                <Label>Role</Label>
+                <Controller
+                  name="role"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="editor">Editor</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+
+              <Button type="submit" className="w-full cursor-pointer">
+                {editingId ? "Update User" : "Create User"}
+              </Button>
+            </form>
+          </SheetContent>
+        </Sheet>
       </div>
+
+      <div className="mt-8 border border-border rounded-xl overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {!userList || userList.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+                  No users yet.
+                </TableCell>
+              </TableRow>
+            ) : (
+              userList.map((u: any) => (
+                <TableRow key={u.id}>
+                  <TableCell className="font-medium">{u.name}</TableCell>
+                  <TableCell>{u.email}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="text-[0.65rem]">{u.role}</Badge>
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {new Date(u.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => openPassword(u)} className="cursor-pointer" title="Reset password">
+                        <Key className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(u)} className="cursor-pointer">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(u)} className="cursor-pointer">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={pwHandle(handlePassword)} className="space-y-4 mt-2">
+            <div>
+              <Label htmlFor="new-password">New Password</Label>
+              <Input id="new-password" type="password" {...pwRegister("password")} placeholder="Minimum 6 characters" />
+              {pwErrors.password && <p className="text-xs text-destructive mt-1">{pwErrors.password.message}</p>}
+            </div>
+            <Button type="submit" className="w-full cursor-pointer">Reset Password</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

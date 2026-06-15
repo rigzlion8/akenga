@@ -67,6 +67,7 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   role: text("role").default("admin"),
   passwordHash: text("password_hash"),
+  sessionToken: text("session_token"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

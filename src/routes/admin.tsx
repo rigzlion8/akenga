@@ -1,4 +1,12 @@
-import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Outlet,
+  Link,
+  redirect,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Sidebar,
   SidebarContent,
@@ -12,21 +20,95 @@ import {
   SidebarTrigger,
   SidebarInset,
   SidebarHeader,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Boxes, FolderTree, Users, LayoutDashboard } from "lucide-react";
+import { Boxes, FolderTree, Users, LayoutDashboard, LogOut } from "lucide-react";
+import { toast } from "sonner";
+import { getCurrentUser, logout } from "@/lib/api";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
-    meta: [
-      { title: "Admin — Akenga Arts Centre" },
-    ],
+    meta: [{ title: "Admin — Akenga Arts Centre" }],
   }),
+  beforeLoad: async ({ location }) => {
+    if (typeof window === "undefined") return {};
+
+    if (location.pathname === "/admin/login") return {};
+
+    const token = localStorage.getItem("auth_token");
+    if (!token) throw redirect({ to: "/admin/login" });
+
+    try {
+      const user = await getCurrentUser({ data: { token } });
+      if (!user) throw redirect({ to: "/admin/login" });
+      return { user };
+    } catch {
+      throw redirect({ to: "/admin/login" });
+    }
+  },
   component: AdminLayout,
 });
 
 function AdminLayout() {
-  const linkClass = (active: boolean) =>
-    `flex items-center gap-3 w-full ${active ? "text-accent" : "text-sidebar-foreground"}`;
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = router.state.location.pathname;
+
+  const isLoginPage = pathname === "/admin/login";
+
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["auth", "current"],
+    queryFn: async () => {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return null;
+      try {
+        return await getCurrentUser({ data: { token } });
+      } catch {
+        return null;
+      }
+    },
+    enabled: typeof window !== "undefined" && !isLoginPage,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (isLoginPage) {
+    return (
+      <main className="min-h-screen">
+        <Outlet />
+      </main>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground text-sm">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    if (typeof window !== "undefined") {
+      navigate({ to: "/admin/login" });
+    }
+    return null;
+  }
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      try {
+        await logout({ data: { token } });
+      } catch {}
+    }
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
+    queryClient.clear();
+    toast.success("Signed out");
+    navigate({ to: "/admin/login" });
+  };
 
   return (
     <SidebarProvider defaultOpen>
@@ -86,6 +168,20 @@ function AdminLayout() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+          <div className="px-2 pb-4">
+            <p className="px-2 text-[0.6rem] tracking-[0.2em] uppercase text-muted-foreground group-data-[collapsible=icon]:hidden">
+              {user.email}
+            </p>
+            <button
+              onClick={handleLogout}
+              className="mt-2 flex items-center gap-2 w-full rounded-md p-2 text-xs text-muted-foreground hover:text-destructive hover:bg-muted/50 transition-colors cursor-pointer group-data-[collapsible=icon]:justify-center"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="group-data-[collapsible=icon]:hidden">Sign Out</span>
+            </button>
+          </div>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border/60 px-6">
