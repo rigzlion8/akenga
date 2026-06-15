@@ -38,8 +38,8 @@ function Index() {
           alt="Akenga Arts Centre studio interior"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/25" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-background" />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-background" />
         <div className="relative text-center px-6">
           <p className="eyebrow text-accent">Est. 2024 · Nairobi, Kenya</p>
           <h1 className="mt-6 font-serif text-5xl sm:text-7xl md:text-9xl tracking-[0.15em] text-background drop-shadow-lg">AKENGA</h1>
@@ -102,7 +102,13 @@ function Index() {
       {/* PARTNERS MARQUEE */}
       <section className="py-20 border-t border-border overflow-hidden">
         <p className="eyebrow text-center mb-10">Institutional Partners & Collaborations</p>
-        <div className="flex gap-16 animate-[marquee_40s_linear_infinite] whitespace-nowrap">
+        <div
+          className="flex gap-16 whitespace-nowrap hover:[animation-play-state:paused]"
+          style={{
+            animation: "marquee 40s linear infinite",
+            width: "max-content",
+          }}
+        >
           {[...partners, ...partners].map((p, i) => (
             <span key={i} className="font-serif text-2xl text-muted-foreground/80">{p}</span>
           ))}
