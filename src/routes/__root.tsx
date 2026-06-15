@@ -212,33 +212,57 @@ function SiteHeader() {
 
 function SiteFooter() {
   return (
-    <footer className="border-t border-border/60 mt-24">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12 grid md:grid-cols-3 gap-8 text-sm text-muted-foreground">
-        <div>
-          <p className="font-serif text-2xl text-foreground">Akenga</p>
-          <p className="mt-2 text-xs tracking-[0.2em] uppercase">Arts Centre · Nairobi</p>
+    <footer className="mt-24 bg-[oklch(0.13_0.04_262)] text-[oklch(0.92_0.01_265)]">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-20 grid sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="sm:col-span-2 lg:col-span-1">
+          <div className="flex items-start gap-3">
+            <span className="w-12 h-12 rounded-full border-2 border-accent flex items-center justify-center font-serif text-accent text-xl shrink-0">A</span>
+            <div>
+              <p className="font-serif text-2xl tracking-wider">Akenga</p>
+              <p className="text-[0.6rem] tracking-[0.35em] uppercase text-accent mt-0.5">Arts Centre</p>
+            </div>
+          </div>
+          <p className="mt-6 text-sm leading-relaxed text-[oklch(0.65_0.03_250)] max-w-xs">
+            A sanctuary for contemporary African art, music education, and curated artisanal goods.
+          </p>
         </div>
+
         <div>
-          <p className="eyebrow">Visit</p>
-          <p className="mt-3">The Atelier, Kilimani<br/>Nairobi, Kenya</p>
+          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-accent mb-4">Visit</p>
+          <div className="space-y-2 text-sm text-[oklch(0.78_0.02_260)]">
+            <p>Devson Court, Argwings Kodhek Close</p>
+            <p>Hurlingham, Nairobi</p>
+          </div>
         </div>
+
         <div>
-          <p className="eyebrow">Contact</p>
-          <p className="mt-3">hello@akenga.art<br/>+254 700 000 000</p>
+          <p className="text-[0.65rem] tracking-[0.3em] uppercase text-accent mb-4">Contact</p>
+          <div className="space-y-2 text-sm text-[oklch(0.78_0.02_260)]">
+            <p>
+              <a href="tel:+254757687103" className="hover:text-accent transition-colors">+254 757 687 103</a>
+            </p>
+            <p>
+              <a href="mailto:hello@akengaarts.com" className="hover:text-accent transition-colors">hello@akengaarts.com</a>
+            </p>
+          </div>
         </div>
       </div>
-      <div className="border-t border-border/60 py-6 text-center text-xs tracking-[0.2em] uppercase text-muted-foreground">
-        © {new Date().getFullYear()} Akenga Arts Centre
-        <span className="mx-3 text-border">|</span>
-        Powered by{" "}
-        <a
-          href="https://maishatech.co.ke"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-accent hover:text-foreground transition-colors"
-        >
-          MaishaTech
-        </a>
+
+      <div className="border-t border-[oklch(0.25_0.05_260)]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs tracking-[0.15em] uppercase text-[oklch(0.55_0.03_255)]">
+          <p>© {new Date().getFullYear()} Akenga Arts Centre</p>
+          <p>
+            Powered by{" "}
+            <a
+              href="https://maishatech.co.ke"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-[oklch(0.9_0.01_265)] transition-colors"
+            >
+              MaishaTech
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );
