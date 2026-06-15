@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
+import { Search } from "lucide-react";
 import { getProducts } from "@/lib/api";
 
 export const Route = createFileRoute("/shop")({
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const [active, setActive] = useState("All");
+  const [search, setSearch] = useState("");
 
   const { data: products } = useQuery({
     queryKey: ["products", "shop"],
@@ -31,9 +33,21 @@ function Shop() {
 
   const filtered = useMemo(() => {
     if (!products) return [];
-    if (active === "All") return products;
-    return products.filter((p) => p.category === active);
-  }, [products, active]);
+    let result = products;
+    if (active !== "All") {
+      result = result.filter((p) => p.category === active);
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.name?.toLowerCase().includes(q) ||
+          p.category?.toLowerCase().includes(q) ||
+          p.tag?.toLowerCase().includes(q),
+      );
+    }
+    return result;
+  }, [products, active, search]);
 
   return (
     <>
@@ -61,6 +75,17 @@ function Shop() {
               {c}
             </button>
           ))}
+        </div>
+
+        <div className="mt-8 relative max-w-md mx-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search by name, category, or tag..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 text-sm border border-border bg-transparent focus:outline-none focus:border-accent transition-colors"
+          />
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-14 text-left">
