@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { Menu } from "lucide-react";
 import {
   Sheet,
@@ -151,6 +151,7 @@ function SiteHeader() {
   const activeClass = "text-accent border-b border-accent pb-1";
   const mobileLinkClass = "block py-3 px-4 text-sm tracking-[0.2em] uppercase text-foreground/80 hover:text-accent hover:bg-muted/50 transition-colors rounded-md";
   const mobileActiveClass = "text-accent bg-muted/50";
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
     { to: "/" as const, label: "Home", exact: true },
@@ -184,7 +185,7 @@ function SiteHeader() {
           ))}
         </nav>
 
-        <Sheet>
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger className="md:hidden p-2 -mr-2 rounded-md text-foreground/70 hover:text-accent hover:bg-muted/50 transition-colors cursor-pointer">
             <Menu className="h-6 w-6" />
             <span className="sr-only">Open menu</span>
@@ -198,6 +199,7 @@ function SiteHeader() {
                   className={mobileLinkClass}
                   activeOptions={l.exact ? { exact: true } : undefined}
                   activeProps={{ className: mobileActiveClass }}
+                  onClick={() => setMobileOpen(false)}
                 >
                   {l.label}
                 </Link>

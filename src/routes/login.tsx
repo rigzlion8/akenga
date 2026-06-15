@@ -48,7 +48,7 @@ function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 pt-24 pb-12">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <span className="inline-flex w-14 h-14 rounded-full border-2 border-accent items-center justify-center font-serif text-accent text-2xl">A</span>
