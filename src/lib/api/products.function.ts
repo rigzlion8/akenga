@@ -2,9 +2,19 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getDb } from "../../db";
 import { products } from "../../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, ne } from "drizzle-orm";
 
 export const getProducts = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const db = getDb();
+    return db
+      .select()
+      .from(products)
+      .where(ne(products.status, "DELETED"))
+      .orderBy(products.createdAt);
+  });
+
+export const getAllProducts = createServerFn({ method: "GET" })
   .handler(async () => {
     const db = getDb();
     return db.select().from(products).orderBy(products.createdAt);
@@ -16,7 +26,7 @@ const productSchema = z.object({
   tag: z.string().optional(),
   price: z.string().min(1),
   description: z.string().optional(),
-  imageUrl: z.string().optional(),
+  images: z.array(z.string()).optional(),
   inStock: z.boolean().optional(),
 });
 
@@ -45,5 +55,8 @@ export const deleteProduct = createServerFn({ method: "POST" })
   .inputValidator(z.object({ id: z.number() }))
   .handler(async ({ data }) => {
     const db = getDb();
-    await db.delete(products).where(eq(products.id, data.id));
+    await db
+      .update(products)
+      .set({ status: "DELETED" })
+      .where(eq(products.id, data.id));
   });
