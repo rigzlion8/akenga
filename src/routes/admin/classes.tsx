@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, useMemo } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useState, useMemo, useRef } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Loader2, Upload, X } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getClasses, createClass, updateClass, deleteClass } from "@/lib/api";
+import { getClasses, createClass, updateClass, deleteClass, uploadImageFn } from "@/lib/api";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -48,7 +48,9 @@ function AdminClasses() {
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [open, setOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: classes } = useQuery({
     queryKey: ["classes", "admin"],
@@ -71,11 +73,14 @@ function AdminClasses() {
     register,
     handleSubmit,
     reset,
-    control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
+
+  const imageUrl = watch("imageUrl") || "";
 
   const onOpen = (cls?: any) => {
     if (cls) {
@@ -94,6 +99,41 @@ function AdminClasses() {
       setEditingId(null);
     }
     setOpen(true);
+  };
+
+  const doUpload = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const result = await uploadImageFn({
+          data: { base64: reader.result as string, filename: file.name, alt: file.name },
+        });
+        resolve(result.url);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    setUploading(true);
+    for (const file of Array.from(files)) {
+      try {
+        const url = await doUpload(file);
+        setValue("imageUrl", url);
+        toast.success("Image uploaded");
+      } catch {
+        toast.error("Failed to upload image");
+      }
+    }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeImage = () => {
+    setValue("imageUrl", "");
   };
 
   const onSubmit = async (data: FormValues) => {
@@ -172,8 +212,46 @@ function AdminClasses() {
                 <Textarea id="description" {...register("description")} placeholder="Description..." rows={3} />
               </div>
               <div>
-                <Label htmlFor="imageUrl">Image URL</Label>
-                <Input id="imageUrl" {...register("imageUrl")} placeholder="https://..." />
+                <Label>Image</Label>
+                <div className="mt-2">
+                  {imageUrl ? (
+                    <div className="relative w-40 h-40 rounded-lg overflow-hidden bg-muted mb-3">
+                      <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center cursor-pointer hover:bg-black/80 transition"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="w-40 h-40 rounded-lg border-2 border-dashed border-border flex flex-col items-center justify-center text-muted-foreground hover:border-accent hover:text-accent transition-colors cursor-pointer mb-3"
+                    >
+                      {uploading ? (
+                        <span className="text-xs">Uploading...</span>
+                      ) : (
+                        <>
+                          <Upload className="h-5 w-5" />
+                          <span className="text-[0.6rem] mt-1 tracking-[0.2em] uppercase">Upload</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileSelect}
+                  />
+                </div>
+                <Label htmlFor="imageUrl" className="text-xs text-muted-foreground">Or paste a URL</Label>
+                <Input id="imageUrl" {...register("imageUrl")} placeholder="https://..." className="mt-1" />
               </div>
               <div>
                 <Label htmlFor="capacity">Capacity</Label>
