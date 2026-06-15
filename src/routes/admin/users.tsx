@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Key, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Key, Search, Loader2 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -72,6 +72,8 @@ function AdminUsers() {
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [passwordUserId, setPasswordUserId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [pwSubmitting, setPwSubmitting] = useState(false);
 
   const token = getToken();
 
@@ -130,6 +132,7 @@ function AdminUsers() {
   };
 
   const onSubmit = async (data: any) => {
+    setSubmitting(true);
     try {
       if (editingId) {
         await updateUser({ data: { token, id: editingId, email: data.email, name: data.name, role: data.role } });
@@ -142,6 +145,8 @@ function AdminUsers() {
       setSheetOpen(false);
     } catch (e: any) {
       toast.error(e.message || "Something went wrong");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -158,6 +163,7 @@ function AdminUsers() {
 
   const handlePassword = async (data: { password: string }) => {
     if (!passwordUserId) return;
+    setPwSubmitting(true);
     try {
       await resetUserPassword({ data: { token, id: passwordUserId, password: data.password } });
       toast.success("Password reset");
@@ -165,6 +171,8 @@ function AdminUsers() {
       setPasswordUserId(null);
     } catch (e: any) {
       toast.error(e.message || "Failed to reset password");
+    } finally {
+      setPwSubmitting(false);
     }
   };
 
@@ -229,7 +237,8 @@ function AdminUsers() {
                 />
               </div>
 
-              <Button type="submit" className="w-full cursor-pointer">
+              <Button type="submit" className="w-full cursor-pointer" disabled={submitting}>
+                {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {editingId ? "Update User" : "Create User"}
               </Button>
             </form>
@@ -307,7 +316,10 @@ function AdminUsers() {
               <Input id="new-password" type="password" {...pwRegister("password")} placeholder="Minimum 6 characters" />
               {pwErrors.password && <p className="text-xs text-destructive mt-1">{pwErrors.password.message}</p>}
             </div>
-            <Button type="submit" className="w-full cursor-pointer">Reset Password</Button>
+            <Button type="submit" className="w-full cursor-pointer" disabled={pwSubmitting}>
+              {pwSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Reset Password
+            </Button>
           </form>
         </DialogContent>
       </Dialog>

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/admin/categories")({
 function AdminCategories() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -51,6 +52,7 @@ function AdminCategories() {
   });
 
   const onSubmit = async (data: { name: string }) => {
+    setSubmitting(true);
     try {
       await createCategory({ data });
       toast.success("Category created");
@@ -58,6 +60,8 @@ function AdminCategories() {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     } catch {
       toast.error("Failed to create category");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -121,8 +125,8 @@ function AdminCategories() {
                 <Input id="name" {...register("name")} placeholder="e.g. Textiles" />
                 {errors.name && <p className="text-xs text-destructive mt-1">{errors.name.message}</p>}
               </div>
-              <Button type="submit" className="w-full cursor-pointer">
-                <Plus className="h-4 w-4 mr-2" />
+              <Button type="submit" className="w-full cursor-pointer" disabled={submitting}>
+                {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Add Category
               </Button>
             </form>

@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Upload, X, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, X, Search, Loader2 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -77,6 +77,7 @@ function AdminProducts() {
   const [newCatName, setNewCatName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const { data: products } = useQuery({
     queryKey: ["products", "admin"],
@@ -173,6 +174,7 @@ function AdminProducts() {
   };
 
   const onSubmit = async (data: FormValues) => {
+    setSubmitting(true);
     try {
       if (editingId) {
         await updateProduct({ data: { id: editingId, ...data } });
@@ -185,6 +187,8 @@ function AdminProducts() {
       setSheetOpen(false);
     } catch {
       toast.error("Something went wrong");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -361,7 +365,8 @@ function AdminProducts() {
                 />
               </div>
 
-              <Button type="submit" className="w-full cursor-pointer">
+              <Button type="submit" className="w-full cursor-pointer" disabled={submitting}>
+                {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {editingId ? "Update Product" : "Create Product"}
               </Button>
             </form>

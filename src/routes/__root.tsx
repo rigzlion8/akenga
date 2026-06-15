@@ -4,11 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { type ReactNode, useState, useEffect } from "react";
-import { Menu, LogOut } from "lucide-react";
+import { Menu, LogOut, Loader2 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -134,9 +135,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const routerState = useRouterState();
+  const isNavigating = routerState.isLoading;
 
   return (
     <QueryClientProvider client={queryClient}>
+      {isNavigating && (
+        <div className="fixed top-0 left-0 right-0 z-[60] h-0.5 bg-accent/20">
+          <div className="h-full bg-accent animate-[loader_1.2s_ease-in-out_infinite] rounded-full" />
+        </div>
+      )}
+      <style>{`@keyframes loader{0%{width:0;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0;margin-left:100%}}`}</style>
       <SiteHeader />
       <main className="min-h-screen">
         <Outlet />
