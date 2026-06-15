@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "A living archive where African creativity is exhibited, taught, and celebrated. Nairobi, Kenya." },
       { name: "author", content: "Akenga Arts Centre" },
       { property: "og:title", content: "Akenga Arts Centre" },
-      { property: "og:description", content: "Where Art Breathes, Music Resonates, and Culture Endures." },
+      { property: "og:description", content: "Where Art Breathes, Roots | Love | Culture" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
