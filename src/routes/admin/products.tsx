@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, X, Search } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -76,6 +76,7 @@ function AdminProducts() {
   const [newCatOpen, setNewCatOpen] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [search, setSearch] = useState("");
 
   const { data: products } = useQuery({
     queryKey: ["products", "admin"],
@@ -101,6 +102,18 @@ function AdminProducts() {
   });
 
   const images = watch("images") || [];
+
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+    if (!search.trim()) return products;
+    const q = search.toLowerCase();
+    return products.filter(
+      (p: any) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.category?.toLowerCase().includes(q) ||
+        p.tag?.toLowerCase().includes(q),
+    );
+  }, [products, search]);
 
   const openCreate = () => {
     setEditingId(null);
@@ -201,7 +214,7 @@ function AdminProducts() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl md:text-5xl">Products</h1>
           <p className="mt-2 text-muted-foreground text-sm">
@@ -211,7 +224,7 @@ function AdminProducts() {
 
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
-            <Button onClick={openCreate} className="cursor-pointer">
+            <Button onClick={openCreate} className="cursor-pointer shrink-0">
               <Plus className="h-4 w-4 mr-2" />
               Add Product
             </Button>
@@ -356,41 +369,53 @@ function AdminProducts() {
         </Sheet>
       </div>
 
-      <div className="mt-8 border border-border rounded-xl overflow-hidden">
+      <div className="mt-6 relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search products by name, category, or tag..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      <div className="mt-4 border border-border rounded-xl overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Image</TableHead>
+              <TableHead className="w-14">Image</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Tag</TableHead>
+              <TableHead className="hidden md:table-cell">Category</TableHead>
+              <TableHead className="hidden md:table-cell">Tag</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="hidden sm:table-cell">Status</TableHead>
+              <TableHead className="text-right w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!products || products.length === 0 ? (
+            {!filteredProducts || filteredProducts.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center text-muted-foreground py-12">
-                  No products yet.
+                  {search.trim() ? "No products match your search." : "No products yet."}
                 </TableCell>
               </TableRow>
             ) : (
-              products.map((p: any) => (
+              filteredProducts.map((p: any) => (
                 <TableRow key={p.id} className={p.status === "DELETED" ? "opacity-50" : ""}>
                   <TableCell>
                     {p.images?.[0] ? (
-                      <img src={p.images[0]} alt="" className="w-12 h-12 rounded-lg object-cover bg-muted" />
+                      <img src={p.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover bg-muted" />
                     ) : (
-                      <div className="w-12 h-12 rounded-lg bg-muted" />
+                      <div className="w-10 h-10 rounded-lg bg-muted" />
                     )}
                   </TableCell>
-                  <TableCell className="font-medium">{p.name}</TableCell>
-                  <TableCell>{p.category}</TableCell>
-                  <TableCell>{p.tag || "—"}</TableCell>
+                  <TableCell className="font-medium">
+                    <span className="line-clamp-1">{p.name}</span>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">{p.category}</TableCell>
+                  <TableCell className="hidden md:table-cell">{p.tag || "—"}</TableCell>
                   <TableCell>{p.price}</TableCell>
-                  <TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     <Badge variant={p.status === "DELETED" ? "destructive" : "secondary"} className="text-[0.65rem]">
                       {p.status === "DELETED" ? "Deleted" : p.inStock ? "Active" : "No stock"}
                     </Badge>

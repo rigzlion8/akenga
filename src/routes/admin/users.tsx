@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Key } from "lucide-react";
+import { Plus, Pencil, Trash2, Key, Search } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -71,6 +71,7 @@ function AdminUsers() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [passwordUserId, setPasswordUserId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
 
   const token = getToken();
 
@@ -79,6 +80,17 @@ function AdminUsers() {
     queryFn: () => getUsers({ data: { token } }),
     enabled: !!token,
   });
+
+  const filteredUsers = useMemo(() => {
+    if (!userList) return [];
+    if (!search.trim()) return userList;
+    const q = search.toLowerCase();
+    return userList.filter(
+      (u: any) =>
+        u.name?.toLowerCase().includes(q) ||
+        u.email?.toLowerCase().includes(q),
+    );
+  }, [userList, search]);
 
   const {
     register,
@@ -158,7 +170,7 @@ function AdminUsers() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl md:text-5xl">Users</h1>
           <p className="mt-2 text-muted-foreground text-sm">
@@ -168,7 +180,7 @@ function AdminUsers() {
 
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
-            <Button onClick={openCreate} className="cursor-pointer">
+            <Button onClick={openCreate} className="cursor-pointer shrink-0">
               <Plus className="h-4 w-4 mr-2" />
               Add User
             </Button>
@@ -225,33 +237,43 @@ function AdminUsers() {
         </Sheet>
       </div>
 
-      <div className="mt-8 border border-border rounded-xl overflow-hidden">
+      <div className="mt-6 relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search users by name or email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      <div className="mt-4 border border-border rounded-xl overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="hidden sm:table-cell">Role</TableHead>
+              <TableHead className="hidden sm:table-cell">Created</TableHead>
+              <TableHead className="text-right w-28">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!userList || userList.length === 0 ? (
+            {!filteredUsers || filteredUsers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
-                  No users yet.
+                  {search.trim() ? "No users match your search." : "No users yet."}
                 </TableCell>
               </TableRow>
             ) : (
-              userList.map((u: any) => (
+              filteredUsers.map((u: any) => (
                 <TableRow key={u.id}>
                   <TableCell className="font-medium">{u.name}</TableCell>
-                  <TableCell>{u.email}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-sm">{u.email}</TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     <Badge variant="secondary" className="text-[0.65rem]">{u.role}</Badge>
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
+                  <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
                     {new Date(u.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">

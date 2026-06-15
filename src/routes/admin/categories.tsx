@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,10 +27,19 @@ export const Route = createFileRoute("/admin/categories")({
 
 function AdminCategories() {
   const queryClient = useQueryClient();
+  const [search, setSearch] = useState("");
+
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: () => getCategories(),
   });
+
+  const filteredCategories = useMemo(() => {
+    if (!categories) return [];
+    if (!search.trim()) return categories;
+    const q = search.toLowerCase();
+    return categories.filter((c: any) => c.name?.toLowerCase().includes(q));
+  }, [categories, search]);
 
   const {
     register,
@@ -54,7 +63,7 @@ function AdminCategories() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl md:text-5xl">Categories</h1>
           <p className="mt-2 text-muted-foreground text-sm">
@@ -63,7 +72,17 @@ function AdminCategories() {
         </div>
       </div>
 
-      <div className="mt-8 grid lg:grid-cols-3 gap-8">
+      <div className="mt-6 relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search categories..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      <div className="mt-4 grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 border border-border rounded-xl overflow-hidden">
           <Table>
             <TableHeader>
@@ -73,14 +92,14 @@ function AdminCategories() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {!categories || categories.length === 0 ? (
+              {!filteredCategories || filteredCategories.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={2} className="text-center text-muted-foreground py-12">
-                    No categories yet.
+                    {search.trim() ? "No categories match your search." : "No categories yet."}
                   </TableCell>
                 </TableRow>
               ) : (
-                categories.map((c: any) => (
+                filteredCategories.map((c: any) => (
                   <TableRow key={c.id}>
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="text-right text-xs text-muted-foreground">

@@ -1,22 +1,39 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getProducts } from "@/lib/api";
+import { getProducts, getCategories, getUsers } from "@/lib/api";
 import { Boxes, FolderTree, Users } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
+function getToken() {
+  return typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : "";
+}
+
 function AdminDashboard() {
+  const token = getToken();
+
   const { data: products } = useQuery({
     queryKey: ["products"],
     queryFn: () => getProducts(),
   });
 
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
+  });
+
+  const { data: users } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUsers({ data: { token } }),
+    enabled: !!token,
+  });
+
   const stats = [
     { label: "Products", value: products?.length ?? "—", icon: Boxes, to: "/admin/products" },
-    { label: "Categories", value: "—", icon: FolderTree, to: "/admin/categories" },
-    { label: "Users", value: "—", icon: Users, to: "/admin/users" },
+    { label: "Categories", value: categories?.length ?? "—", icon: FolderTree, to: "/admin/categories" },
+    { label: "Users", value: users?.length ?? "—", icon: Users, to: "/admin/users" },
   ];
 
   return (
@@ -43,7 +60,7 @@ function AdminDashboard() {
       </div>
 
       <div className="mt-12 p-8 border border-dashed border-border rounded-xl">
-        <p className="text-sm text-muted-foreground">Tip: Use the Admin sidebar to manage Products, Categories, and Users. User management is coming in the next phase.</p>
+        <p className="text-sm text-muted-foreground">Use the sidebar to manage Products, Categories, and Users. All changes are reflected immediately.</p>
       </div>
     </>
   );
