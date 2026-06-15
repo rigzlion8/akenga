@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getProducts, getCategories, getUsers } from "@/lib/api";
-import { Boxes, FolderTree, Users } from "lucide-react";
+import { getProducts, getCategories, getUsers, getClasses } from "@/lib/api";
+import { Boxes, FolderTree, Users, GraduationCap } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -30,8 +30,14 @@ function AdminDashboard() {
     enabled: !!token,
   });
 
+  const { data: classes } = useQuery({
+    queryKey: ["classes", "admin"],
+    queryFn: () => getClasses(),
+  });
+
   const stats = [
     { label: "Products", value: products?.length ?? "—", icon: Boxes, to: "/admin/products" },
+    { label: "Classes", value: classes?.length ?? "—", icon: GraduationCap, to: "/admin/classes" },
     { label: "Categories", value: categories?.length ?? "—", icon: FolderTree, to: "/admin/categories" },
     { label: "Users", value: users?.length ?? "—", icon: Users, to: "/admin/users" },
   ];
@@ -41,7 +47,7 @@ function AdminDashboard() {
       <h1 className="font-serif text-3xl md:text-5xl">Dashboard</h1>
       <p className="mt-2 text-muted-foreground">Overview of your Akenga Arts Centre content.</p>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
         {stats.map((s) => (
           <Link
             key={s.label}

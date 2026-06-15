@@ -84,3 +84,33 @@ export const uploads = pgTable("uploads", {
   alt: text("alt"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const enrollments = pgTable("enrollments", {
+  id: serial("id").primaryKey(),
+  classId: integer("class_id").notNull().references(() => classes.id),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  message: text("message"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone"),
+  total: text("total").notNull(),
+  status: text("status").default("PENDING"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull().references(() => orders.id),
+  productId: integer("product_id").notNull().references(() => products.id),
+  productName: text("product_name").notNull(),
+  price: text("price").notNull(),
+  quantity: integer("quantity").notNull().default(1),
+  createdAt: timestamp("created_at").defaultNow(),
+});

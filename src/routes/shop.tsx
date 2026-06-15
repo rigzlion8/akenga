@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
+import { toast } from "sonner";
 import { getProducts } from "@/lib/api";
+import { useCart } from "@/hooks/cart";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -19,6 +21,7 @@ export const Route = createFileRoute("/shop")({
 function Shop() {
   const [active, setActive] = useState("All");
   const [search, setSearch] = useState("");
+  const { addItem } = useCart();
 
   const { data: products } = useQuery({
     queryKey: ["products", "shop"],
@@ -101,7 +104,20 @@ function Shop() {
               <h3 className="font-serif text-xl md:text-2xl mt-2">{p.name}</h3>
               <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                 <span className="text-sm text-foreground/80">{p.price}</span>
-                <button className="text-[0.7rem] tracking-[0.25em] uppercase text-accent hover:text-foreground">Add +</button>
+                <button
+                  onClick={() => {
+                    addItem({
+                      productId: p.id,
+                      productName: p.name,
+                      price: p.price,
+                      image: p.images?.[0],
+                    });
+                    toast.success(`Added "${p.name}" to cart`);
+                  }}
+                  className="text-[0.7rem] tracking-[0.25em] uppercase text-accent hover:text-foreground cursor-pointer"
+                >
+                  Add +
+                </button>
               </div>
             </article>
           ))}

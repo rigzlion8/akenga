@@ -9,12 +9,13 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { type ReactNode, useState, useEffect } from "react";
-import { Menu, LogOut, Loader2 } from "lucide-react";
+import { Menu, LogOut, Loader2, ShoppingBag } from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { CartProvider, useCart } from "@/hooks/cart";
 
 import appCss from "../styles.css?url";
 
@@ -140,17 +141,19 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {isNavigating && (
-        <div className="fixed top-0 left-0 right-0 z-[60] h-1 bg-accent/30">
-          <div className="h-full bg-accent animate-[loader_1s_ease-in-out_infinite] rounded-full" />
-        </div>
-      )}
-      <style>{`@keyframes loader{0%{width:0;margin-left:0}50%{width:70%;margin-left:15%}100%{width:0;margin-left:100%}}`}</style>
-      <SiteHeader />
-      <main className={`min-h-screen transition-opacity duration-150 ${isNavigating ? "opacity-60" : "opacity-100"}`}>
-        <Outlet />
-      </main>
-      <SiteFooter />
+      <CartProvider>
+        {isNavigating && (
+          <div className="fixed top-0 left-0 right-0 z-[60] h-1 bg-accent/30">
+            <div className="h-full bg-accent animate-[loader_1s_ease-in-out_infinite] rounded-full" />
+          </div>
+        )}
+        <style>{`@keyframes loader{0%{width:0;margin-left:0}50%{width:70%;margin-left:15%}100%{width:0;margin-left:100%}}`}</style>
+        <SiteHeader />
+        <main className={`min-h-screen transition-opacity duration-150 ${isNavigating ? "opacity-60" : "opacity-100"}`}>
+          <Outlet />
+        </main>
+        <SiteFooter />
+      </CartProvider>
     </QueryClientProvider>
   );
 }
@@ -166,6 +169,8 @@ function SiteHeader() {
   useEffect(() => {
     setLoggedIn(!!localStorage.getItem("auth_token"));
   }, []);
+
+  const { itemCount } = useCart();
 
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
@@ -205,6 +210,18 @@ function SiteHeader() {
               {l.label}
             </Link>
           ))}
+          <Link
+            to="/cart"
+            className={`${linkClass} relative flex items-center gap-1`}
+            activeProps={{ className: activeClass }}
+          >
+            <ShoppingBag className="h-4 w-4" />
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-4 bg-accent text-accent-foreground text-[0.6rem] w-4 h-4 rounded-full flex items-center justify-center">
+                {itemCount}
+              </span>
+            )}
+          </Link>
           {loggedIn && (
             <Link to="/admin" className={linkClass} activeProps={{ className: activeClass }}>
               Admin
@@ -231,6 +248,19 @@ function SiteHeader() {
                   {l.label}
                 </Link>
               ))}
+              <Link
+                to="/cart"
+                className={`${mobileLinkClass} flex items-center gap-2`}
+                onClick={() => setMobileOpen(false)}
+              >
+                <ShoppingBag className="h-4 w-4" />
+                Cart
+                {itemCount > 0 && (
+                  <span className="ml-auto bg-accent text-accent-foreground text-[0.65rem] px-2 py-0.5 rounded-full">
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
               {loggedIn && (
                 <>
                   <div className="my-2 border-t border-border/60" />
