@@ -7,8 +7,8 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { type ReactNode, useState } from "react";
-import { Menu } from "lucide-react";
+import { type ReactNode, useState, useEffect } from "react";
+import { Menu, LogOut } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -152,6 +152,19 @@ function SiteHeader() {
   const mobileLinkClass = "block py-3 px-4 text-sm tracking-[0.2em] uppercase text-foreground/80 hover:text-accent hover:bg-muted/50 transition-colors rounded-md";
   const mobileActiveClass = "text-accent bg-muted/50";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(!!localStorage.getItem("auth_token"));
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
+    setLoggedIn(false);
+    setMobileOpen(false);
+    window.location.href = "/";
+  };
 
   const navLinks = [
     { to: "/" as const, label: "Home", exact: true },
@@ -183,6 +196,11 @@ function SiteHeader() {
               {l.label}
             </Link>
           ))}
+          {loggedIn && (
+            <Link to="/admin" className={linkClass} activeProps={{ className: activeClass }}>
+              Admin
+            </Link>
+          )}
         </nav>
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -204,6 +222,25 @@ function SiteHeader() {
                   {l.label}
                 </Link>
               ))}
+              {loggedIn && (
+                <>
+                  <div className="my-2 border-t border-border/60" />
+                  <Link
+                    to="/admin"
+                    className={mobileLinkClass}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Admin Panel
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 py-3 px-4 text-sm tracking-[0.2em] uppercase text-muted-foreground hover:text-destructive hover:bg-muted/50 transition-colors rounded-md cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </button>
+                </>
+              )}
             </nav>
           </SheetContent>
         </Sheet>
