@@ -136,18 +136,18 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const routerState = useRouterState();
-  const isNavigating = routerState.isLoading;
+  const isNavigating = routerState.isLoading || routerState.isTransitioning;
 
   return (
     <QueryClientProvider client={queryClient}>
       {isNavigating && (
-        <div className="fixed top-0 left-0 right-0 z-[60] h-0.5 bg-accent/20">
-          <div className="h-full bg-accent animate-[loader_1.2s_ease-in-out_infinite] rounded-full" />
+        <div className="fixed top-0 left-0 right-0 z-[60] h-1 bg-accent/30">
+          <div className="h-full bg-accent animate-[loader_1s_ease-in-out_infinite] rounded-full" />
         </div>
       )}
-      <style>{`@keyframes loader{0%{width:0;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0;margin-left:100%}}`}</style>
+      <style>{`@keyframes loader{0%{width:0;margin-left:0}50%{width:70%;margin-left:15%}100%{width:0;margin-left:100%}}`}</style>
       <SiteHeader />
-      <main className="min-h-screen">
+      <main className={`min-h-screen transition-opacity duration-150 ${isNavigating ? "opacity-60" : "opacity-100"}`}>
         <Outlet />
       </main>
       <SiteFooter />
