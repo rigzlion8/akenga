@@ -38,12 +38,12 @@ function Index() {
           alt="Akenga Arts Centre studio interior"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-background/55" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
+        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-background" />
         <div className="relative text-center px-6">
           <p className="eyebrow text-accent">Est. 2024 · Nairobi, Kenya</p>
-          <h1 className="mt-6 font-serif text-7xl md:text-9xl tracking-[0.15em] text-background drop-shadow-lg">AKENGA</h1>
-          <p className="mt-6 font-serif italic text-xl md:text-2xl text-background/90">Where Art Breathes, Music Resonates, and Culture Endures</p>
+          <h1 className="mt-6 font-serif text-5xl sm:text-7xl md:text-9xl tracking-[0.15em] text-background drop-shadow-lg">AKENGA</h1>
+          <p className="mt-6 font-serif italic text-lg md:text-2xl text-background/90">Where Art Breathes, Music Resonates, and Culture Endures</p>
         </div>
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
           <p className="eyebrow text-background/70">Explore</p>

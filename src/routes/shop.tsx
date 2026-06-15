@@ -37,7 +37,7 @@ function Shop() {
     <>
       <section className="pt-36 pb-16 max-w-7xl mx-auto px-6 lg:px-10">
         <p className="eyebrow">The Boutique</p>
-        <h1 className="font-serif text-7xl mt-4">Shop</h1>
+        <h1 className="font-serif text-5xl md:text-7xl mt-4">Shop</h1>
         <p className="mt-6 max-w-2xl text-muted-foreground leading-relaxed">
           From handwoven raffia footwear to gallery-quality originals — every piece in our curated collection carries a story of craft, culture, and considered design.
         </p>
@@ -45,7 +45,7 @@ function Shop() {
 
       <section className="max-w-7xl mx-auto px-6 lg:px-10 py-12 text-center">
         <p className="eyebrow">The Curated Boutique</p>
-        <h2 className="font-serif text-5xl mt-3">Shop</h2>
+        <h2 className="font-serif text-3xl md:text-5xl mt-3">Shop</h2>
         <p className="mt-4 max-w-xl mx-auto text-muted-foreground">A cabinet of curiosities — from artisanal craft to gallery-quality originals, each piece chosen with intention.</p>
         <div className="h-px w-40 bg-accent/50 mx-auto my-10" />
 
@@ -54,7 +54,7 @@ function Shop() {
             <button
               key={c}
               onClick={() => setActive(c)}
-              className={`px-5 py-2.5 text-[0.7rem] tracking-[0.2em] uppercase border transition ${active===c ? "bg-accent text-accent-foreground border-accent" : "border-border text-foreground/70 hover:border-accent hover:text-accent"}`}
+              className={`px-3.5 py-2 sm:px-5 sm:py-2.5 text-[0.7rem] tracking-[0.2em] uppercase border transition ${active===c ? "bg-accent text-accent-foreground border-accent" : "border-border text-foreground/70 hover:border-accent hover:text-accent"}`}
             >
               {c}
             </button>
@@ -69,7 +69,7 @@ function Shop() {
                 <span className="absolute top-4 left-4 bg-foreground/90 text-background text-[0.65rem] tracking-[0.2em] uppercase px-3 py-1.5">{p.tag}</span>
               </div>
               <p className="eyebrow mt-5">{p.cat}</p>
-              <h3 className="font-serif text-2xl mt-2">{p.name}</h3>
+              <h3 className="font-serif text-xl md:text-2xl mt-2">{p.name}</h3>
               <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                 <span className="text-sm text-foreground/80">{p.price}</span>
                 <button className="text-[0.7rem] tracking-[0.25em] uppercase text-accent hover:text-foreground">Add +</button>
@@ -82,7 +82,7 @@ function Shop() {
       <section className="max-w-7xl mx-auto px-6 lg:px-10 py-24 grid md:grid-cols-2 gap-12 items-center">
         <div>
           <p className="eyebrow">The Naturalia Collection</p>
-          <h2 className="font-serif text-5xl mt-3">Beyond the Canvas</h2>
+          <h2 className="font-serif text-3xl md:text-5xl mt-3">Beyond the Canvas</h2>
           <p className="mt-6 text-muted-foreground leading-relaxed">
             Our curated selection reaches past traditional supplies. The Artisan Bee Hive is a sculptural object — handcrafted from sustainably sourced timber, each hive honours the geometry of nature while supporting local apiaries.
           </p>
@@ -91,7 +91,7 @@ function Shop() {
           </p>
           <button className="mt-8 px-8 py-3 border border-accent text-accent text-xs tracking-[0.25em] uppercase hover:bg-accent hover:text-accent-foreground transition">Explore Collection</button>
           <p className="mt-8 eyebrow">Starting from</p>
-          <p className="font-serif text-3xl mt-1">KES 12,000</p>
+          <p className="font-serif text-2xl md:text-3xl mt-1">KES 12,000</p>
         </div>
         <div className="aspect-[4/5] overflow-hidden bg-muted">
           <img src="https://res.cloudinary.com/dsjptulx6/image/upload/v1781461057/ywt3wsbhm2iq8zpnptv1.png" alt="Artisan Bee Hive" className="w-full h-full object-cover" />

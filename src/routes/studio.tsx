@@ -26,7 +26,7 @@ function Studio() {
     <>
       <section className="pt-36 pb-16 max-w-7xl mx-auto px-6 lg:px-10">
         <p className="eyebrow">The Atelier</p>
-        <h1 className="font-serif text-7xl mt-4">Studio</h1>
+        <h1 className="font-serif text-5xl md:text-7xl mt-4">Studio</h1>
         <p className="mt-6 max-w-2xl text-muted-foreground leading-relaxed">
           Step behind the gallery walls. Our studios are living laboratories where technique meets vision — observe creation as it happens, and explore our curated exhibitions.
         </p>
@@ -34,7 +34,7 @@ function Studio() {
 
       <section className="max-w-7xl mx-auto px-6 lg:px-10 py-12">
         <p className="eyebrow flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> The Pulse — Studio Live</p>
-        <h2 className="font-serif text-5xl mt-3">Inside the Studios</h2>
+        <h2 className="font-serif text-3xl md:text-5xl mt-3">Inside the Studios</h2>
         <div className="h-px bg-accent/40 my-8" />
         <div className="grid md:grid-cols-2 gap-10">
           {live.map((l) => (
@@ -47,7 +47,7 @@ function Studio() {
                 <button className="absolute bottom-4 left-4 bg-background/90 text-foreground text-xs tracking-[0.2em] uppercase px-4 py-2 hover:bg-accent hover:text-accent-foreground transition">View Live</button>
               </div>
               <p className="mt-5 eyebrow">{l.name}</p>
-              <h3 className="font-serif text-3xl mt-2">{l.title}</h3>
+              <h3 className="font-serif text-2xl md:text-3xl mt-2">{l.title}</h3>
               <p className="text-muted-foreground mt-2">{l.desc}</p>
             </article>
           ))}
@@ -56,7 +56,7 @@ function Studio() {
 
       <section className="max-w-7xl mx-auto px-6 lg:px-10 py-24">
         <p className="eyebrow">Current & Upcoming</p>
-        <h2 className="font-serif text-5xl mt-3">Art Exhibitions</h2>
+        <h2 className="font-serif text-3xl md:text-5xl mt-3">Art Exhibitions</h2>
         <div className="h-px bg-accent/40 my-8" />
         <div className="grid md:grid-cols-3 gap-8">
           {shows.map((s) => (

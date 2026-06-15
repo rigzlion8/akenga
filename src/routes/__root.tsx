@@ -8,6 +8,12 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { type ReactNode } from "react";
+import { Menu } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 import appCss from "../styles.css?url";
 
@@ -143,22 +149,62 @@ function RootComponent() {
 function SiteHeader() {
   const linkClass = "text-xs tracking-[0.25em] uppercase text-foreground/80 hover:text-accent transition-colors";
   const activeClass = "text-accent border-b border-accent pb-1";
+  const mobileLinkClass = "block py-3 px-4 text-sm tracking-[0.2em] uppercase text-foreground/80 hover:text-accent hover:bg-muted/50 transition-colors rounded-md";
+  const mobileActiveClass = "text-accent bg-muted/50";
+
+  const navLinks = [
+    { to: "/" as const, label: "Home", exact: true },
+    { to: "/studio" as const, label: "Studio" },
+    { to: "/classes" as const, label: "Classes" },
+    { to: "/shop" as const, label: "Shop" },
+  ];
+
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-background/85 backdrop-blur-md border-b border-border/60">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 shrink-0">
           <span className="w-10 h-10 rounded-full border border-accent flex items-center justify-center font-serif text-accent text-lg">A</span>
           <span className="leading-tight">
             <span className="block font-serif text-xl tracking-wider">AKENGA</span>
             <span className="block text-[0.6rem] tracking-[0.3em] text-muted-foreground">ARTS CENTRE</span>
           </span>
         </Link>
-        <nav className="flex items-center gap-8">
-          <Link to="/" className={linkClass} activeOptions={{ exact: true }} activeProps={{ className: activeClass }}>Home</Link>
-          <Link to="/studio" className={linkClass} activeProps={{ className: activeClass }}>Studio</Link>
-          <Link to="/classes" className={linkClass} activeProps={{ className: activeClass }}>Classes</Link>
-          <Link to="/shop" className={linkClass} activeProps={{ className: activeClass }}>Shop</Link>
+
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className={linkClass}
+              activeOptions={l.exact ? { exact: true } : undefined}
+              activeProps={{ className: activeClass }}
+            >
+              {l.label}
+            </Link>
+          ))}
         </nav>
+
+        <Sheet>
+          <SheetTrigger className="md:hidden p-2 -mr-2 rounded-md text-foreground/70 hover:text-accent hover:bg-muted/50 transition-colors cursor-pointer">
+            <Menu className="h-6 w-6" />
+            <span className="sr-only">Open menu</span>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[280px] px-0 pt-16">
+            <nav className="flex flex-col gap-1 px-4">
+              {navLinks.map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className={mobileLinkClass}
+                  activeOptions={l.exact ? { exact: true } : undefined}
+                  activeProps={{ className: mobileActiveClass }}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );

@@ -23,7 +23,7 @@ function Classes() {
     <>
       <section className="pt-36 pb-16 max-w-7xl mx-auto px-6 lg:px-10">
         <p className="eyebrow">Music Education</p>
-        <h1 className="font-serif text-7xl mt-4">Classes</h1>
+        <h1 className="font-serif text-5xl md:text-7xl mt-4">Classes</h1>
         <p className="mt-6 max-w-2xl text-muted-foreground leading-relaxed">
           The Akenga Conservatory offers intimate, rigorous instruction across classical and traditional instruments. Choose your path and begin your musical journey.
         </p>
@@ -31,7 +31,7 @@ function Classes() {
 
       <section className="max-w-7xl mx-auto px-6 lg:px-10 py-12">
         <p className="eyebrow">The Conservatory</p>
-        <h2 className="font-serif text-5xl mt-3">Learn an Instrument</h2>
+        <h2 className="font-serif text-3xl md:text-5xl mt-3">Learn an Instrument</h2>
         <p className="mt-4 max-w-2xl text-muted-foreground">Refine your craft under the guidance of accomplished musicians in our intimate, world-class conservatory.</p>
         <div className="h-px bg-accent/40 my-10" />
 
@@ -41,7 +41,7 @@ function Classes() {
               <div className="aspect-[3/4] overflow-hidden bg-muted">
                 <img src={i.img} alt={i.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               </div>
-              <h3 className="font-serif text-3xl mt-5">{i.name}</h3>
+              <h3 className="font-serif text-2xl md:text-3xl mt-5">{i.name}</h3>
               <p className="text-sm text-muted-foreground mt-1">{i.style}</p>
               <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
                 <span className="text-[0.7rem] tracking-[0.2em] uppercase text-muted-foreground">{i.level}</span>
