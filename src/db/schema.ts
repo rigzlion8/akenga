@@ -100,6 +100,7 @@ export const orders = pgTable("orders", {
   customerName: text("customer_name").notNull(),
   customerEmail: text("customer_email").notNull(),
   customerPhone: text("customer_phone"),
+  customerLocation: text("customer_location"),
   total: text("total").notNull(),
   status: text("status").default("PENDING"),
   createdAt: timestamp("created_at").defaultNow(),

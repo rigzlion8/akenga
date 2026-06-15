@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft } from "lucide-react";
 import { useCart } from "@/hooks/cart";
 
@@ -15,6 +16,24 @@ export const Route = createFileRoute("/cart")({
 function Cart() {
   const { items, removeItem, updateQuantity, itemCount } = useCart();
   const navigate = useNavigate();
+
+  const total = useMemo(() => {
+    return items
+      .reduce((sum, item) => {
+        const num = parseInt(item.price.replace(/[^0-9]/g, ""), 10) || 0;
+        return sum + num * item.quantity;
+      }, 0)
+      .toLocaleString();
+  }, [items]);
+
+  const handleCheckout = () => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+    if (!token) {
+      window.location.href = "/register?redirect=%2Fcheckout";
+      return;
+    }
+    navigate({ to: "/checkout" } as any);
+  };
 
   if (items.length === 0) {
     return (
@@ -45,46 +64,50 @@ function Cart() {
       </section>
 
       <section className="max-w-5xl mx-auto px-6 lg:px-10 py-8">
-        <div className="space-y-6">
+        <div className="space-y-4">
           {items.map((item) => (
             <div
               key={item.productId}
-              className="flex items-center gap-6 p-4 border border-border rounded-lg"
+              className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border border-border rounded-lg"
             >
-              {item.image && (
-                <div className="w-24 h-24 shrink-0 overflow-hidden bg-muted rounded-md">
-                  <img
-                    src={item.image}
-                    alt={item.productName}
-                    className="w-full h-full object-cover"
-                  />
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                {item.image && (
+                  <div className="w-20 h-20 shrink-0 overflow-hidden bg-muted rounded-md">
+                    <img
+                      src={item.image}
+                      alt={item.productName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <h3 className="font-serif text-base md:text-lg">{item.productName}</h3>
+                  <p className="text-sm text-accent mt-1">{item.price}</p>
                 </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-serif text-lg md:text-xl truncate">{item.productName}</h3>
-                <p className="text-sm text-accent mt-1">{item.price}</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between sm:justify-end gap-4">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                    className="p-1.5 border border-border rounded hover:bg-muted transition-colors cursor-pointer"
+                  >
+                    <Minus className="h-3 w-3" />
+                  </button>
+                  <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                    className="p-1.5 border border-border rounded hover:bg-muted transition-colors cursor-pointer"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </button>
+                </div>
                 <button
-                  onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                  className="p-1.5 border border-border rounded hover:bg-muted transition-colors cursor-pointer"
+                  onClick={() => removeItem(item.productId)}
+                  className="p-2 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
                 >
-                  <Minus className="h-3 w-3" />
-                </button>
-                <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
-                <button
-                  onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                  className="p-1.5 border border-border rounded hover:bg-muted transition-colors cursor-pointer"
-                >
-                  <Plus className="h-3 w-3" />
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
-              <button
-                onClick={() => removeItem(item.productId)}
-                className="p-2 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
             </div>
           ))}
         </div>
@@ -94,6 +117,7 @@ function Cart() {
             <span className="text-sm tracking-[0.2em] uppercase text-muted-foreground">
               {itemCount} {itemCount === 1 ? "item" : "items"}
             </span>
+            <span className="font-serif text-xl md:text-2xl">KES {total}</span>
           </div>
           <div className="mt-6 flex flex-col sm:flex-row gap-4">
             <Link
@@ -103,7 +127,7 @@ function Cart() {
               Continue Shopping
             </Link>
             <button
-              onClick={() => navigate({ to: "/checkout" })}
+              onClick={handleCheckout}
               className="flex-1 px-6 py-3 bg-accent text-accent-foreground text-xs tracking-[0.25em] uppercase hover:bg-accent/90 transition cursor-pointer"
             >
               Proceed to Checkout

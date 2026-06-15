@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ClassesRouteImport } from './routes/classes'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -36,6 +37,11 @@ const ShopRoute = ShopRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClassesRoute = ClassesRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/classes'
     | '/login'
+    | '/register'
     | '/shop'
     | '/studio'
     | '/admin/categories'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/classes'
     | '/login'
+    | '/register'
     | '/shop'
     | '/studio'
     | '/admin/categories'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/classes'
     | '/login'
+    | '/register'
     | '/shop'
     | '/studio'
     | '/admin/categories'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ClassesRoute: typeof ClassesRoute
   LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
   ShopRoute: typeof ShopRoute
   StudioRoute: typeof StudioRoute
 }
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/classes': {
@@ -313,6 +333,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ClassesRoute: ClassesRoute,
   LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
   ShopRoute: ShopRoute,
   StudioRoute: StudioRoute,
 }

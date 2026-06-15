@@ -3,7 +3,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { users } from "../../db/schema";
-import { verifyPassword, generateToken } from "../auth";
+import { hashPassword, verifyPassword, generateToken } from "../auth";
 
 const userSelect = {
   id: users.id,
@@ -92,4 +92,44 @@ export const logout = createServerFn({ method: "POST" })
         .set({ sessionToken: null })
         .where(eq(users.id, found.id));
     }
+  });
+
+export const register = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      email: z.string().email(),
+      name: z.string().min(1),
+      password: z.string().min(6),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const db = getDb();
+
+    const [existing] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, data.email));
+
+    if (existing) throw new Error("An account with this email already exists");
+
+    const token = generateToken();
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: data.email,
+        name: data.name,
+        role: "customer",
+        passwordHash: hashPassword(data.password),
+        sessionToken: token,
+      })
+      .returning({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        role: users.role,
+        createdAt: users.createdAt,
+      });
+
+    return { user, token };
   });

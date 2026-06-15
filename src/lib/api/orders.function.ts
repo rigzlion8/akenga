@@ -15,6 +15,7 @@ const orderSchema = z.object({
   customerName: z.string().min(1),
   customerEmail: z.string().email(),
   customerPhone: z.string().optional(),
+  customerLocation: z.string().optional(),
   total: z.string(),
   items: z.array(orderItemSchema),
 });

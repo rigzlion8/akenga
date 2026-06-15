@@ -16,6 +16,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CartProvider, useCart } from "@/hooks/cart";
+import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 
@@ -148,6 +149,7 @@ function RootComponent() {
           </div>
         )}
         <style>{`@keyframes loader{0%{width:0;margin-left:0}50%{width:70%;margin-left:15%}100%{width:0;margin-left:100%}}`}</style>
+        <Toaster />
         <SiteHeader />
         <main className={`min-h-screen transition-opacity duration-150 ${isNavigating ? "opacity-60" : "opacity-100"}`}>
           <Outlet />

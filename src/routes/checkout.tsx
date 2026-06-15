@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,7 +8,6 @@ import { Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/hooks/cart";
 import { createOrder } from "@/lib/api";
 
@@ -19,6 +18,14 @@ export const Route = createFileRoute("/checkout")({
       { name: "description", content: "Complete your order at Akenga Arts Centre." },
     ],
   }),
+  beforeLoad: async () => {
+    if (typeof window === "undefined") return {};
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      throw redirect({ to: "/register", search: { redirect: "/checkout" } as any });
+    }
+    return {};
+  },
   component: Checkout,
 });
 
@@ -26,6 +33,7 @@ const formSchema = z.object({
   customerName: z.string().min(1, "Name is required"),
   customerEmail: z.string().email("Valid email is required"),
   customerPhone: z.string().optional(),
+  customerLocation: z.string().min(1, "Location is required"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -61,6 +69,7 @@ function Checkout() {
           customerName: data.customerName,
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone || "",
+          customerLocation: data.customerLocation,
           total: `KES ${total.toLocaleString()}`,
           items: items.map((i) => ({
             productId: i.productId,
@@ -133,11 +142,11 @@ function Checkout() {
             <div className="space-y-3">
               {items.map((item) => (
                 <div key={item.productId} className="flex justify-between items-center py-2 border-b border-border/50 text-sm">
-                  <div>
-                    <span className="font-medium">{item.productName}</span>
+                  <div className="min-w-0 mr-2">
+                    <span className="font-medium break-words">{item.productName}</span>
                     <span className="text-muted-foreground ml-2">x{item.quantity}</span>
                   </div>
-                  <span className="text-muted-foreground">{item.price}</span>
+                  <span className="text-muted-foreground shrink-0">{item.price}</span>
                 </div>
               ))}
             </div>
@@ -162,6 +171,11 @@ function Checkout() {
               <div>
                 <Label htmlFor="customerPhone">Phone (optional)</Label>
                 <Input id="customerPhone" {...register("customerPhone")} placeholder="+254..." />
+              </div>
+              <div>
+                <Label htmlFor="customerLocation">Location / Address</Label>
+                <Input id="customerLocation" {...register("customerLocation")} placeholder="e.g. Kilimani, Nairobi" />
+                {errors.customerLocation && <p className="text-xs text-destructive mt-1">{errors.customerLocation.message}</p>}
               </div>
               <Button type="submit" className="w-full cursor-pointer" disabled={submitting}>
                 {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
