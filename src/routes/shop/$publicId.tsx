@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
-import { getProductById } from "@/lib/api";
+import { getProductByPublicId } from "@/lib/api";
 import { useCart } from "@/hooks/cart";
 
-export const Route = createFileRoute("/shop/$productId")({
+export const Route = createFileRoute("/shop/$publicId")({
   head: () => ({
     meta: [
       { title: "Product — Akenga Boutique" },
@@ -18,15 +18,14 @@ export const Route = createFileRoute("/shop/$productId")({
 });
 
 function ShopProductDetail() {
-  const { productId } = useParams({ from: "/shop/$productId" });
-  const id = Number(productId);
+  const { publicId } = useParams({ from: "/shop/$publicId" });
   const { addItem } = useCart();
   const [activeImage, setActiveImage] = useState(0);
 
   const { data: product, isLoading } = useQuery({
-    queryKey: ["product", id],
-    queryFn: () => getProductById({ data: { id } }),
-    enabled: !isNaN(id),
+    queryKey: ["product", "public", publicId],
+    queryFn: () => getProductByPublicId({ data: { publicId } }),
+    enabled: !!publicId,
   });
 
   if (isLoading) {
@@ -51,21 +50,11 @@ function ShopProductDetail() {
     );
   }
 
-  const images = product.images && product.images.length > 0
-    ? product.images
-    : [];
+  const images: string[] = product.images ?? [];
+  const hasMultiple = images.length > 1;
 
-  const nextImage = () => {
-    if (images.length > 0) {
-      setActiveImage((prev) => (prev + 1) % images.length);
-    }
-  };
-
-  const prevImage = () => {
-    if (images.length > 0) {
-      setActiveImage((prev) => (prev - 1 + images.length) % images.length);
-    }
-  };
+  const prevImage = () => setActiveImage((i) => (i - 1 + images.length) % images.length);
+  const nextImage = () => setActiveImage((i) => (i + 1) % images.length);
 
   const handleAddToCart = () => {
     addItem({
@@ -93,7 +82,6 @@ function ShopProductDetail() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
           {/* Images */}
           <div className="space-y-4">
-            {/* Main image */}
             <div className="relative aspect-square overflow-hidden bg-muted rounded-xl border border-border">
               {images.length > 0 ? (
                 <>
@@ -102,7 +90,7 @@ function ShopProductDetail() {
                     alt={`${product.name} — image ${activeImage + 1}`}
                     className="w-full h-full object-cover"
                   />
-                  {images.length > 1 && (
+                  {hasMultiple && (
                     <>
                       <button
                         onClick={prevImage}
@@ -131,8 +119,7 @@ function ShopProductDetail() {
               )}
             </div>
 
-            {/* Thumbnail strip */}
-            {images.length > 1 && (
+            {hasMultiple && (
               <div className="flex gap-3 overflow-x-auto pb-1">
                 {images.map((url: string, i: number) => (
                   <button
@@ -178,7 +165,6 @@ function ShopProductDetail() {
             )}
 
             <div className="mt-8 space-y-4">
-              {/* Stock info */}
               <div className="flex items-center gap-2">
                 <span
                   className={`w-2 h-2 rounded-full ${
@@ -208,7 +194,6 @@ function ShopProductDetail() {
               )}
             </div>
 
-            {/* Extra metadata */}
             <div className="mt-10 border-t border-border/60 pt-6">
               <dl className="grid grid-cols-2 gap-3 text-xs">
                 <div>

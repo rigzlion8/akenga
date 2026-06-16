@@ -1,7 +1,8 @@
-import { pgTable, text, timestamp, boolean, integer, serial } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer, serial, uuid } from "drizzle-orm/pg-core";
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
+  publicId: uuid("public_id").defaultRandom().notNull().unique(),
   name: text("name").notNull(),
   category: text("category").notNull(),
   tag: text("tag"),

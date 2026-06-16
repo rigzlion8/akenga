@@ -21,7 +21,7 @@ import { Route as ActivateRouteImport } from './routes/activate'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopIndexRouteImport } from './routes/shop/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
+import { Route as ShopPublicIdRouteImport } from './routes/shop/$publicId'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
 import { Route as AdminClassesRouteImport } from './routes/admin/classes'
@@ -89,9 +89,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const ShopProductIdRoute = ShopProductIdRouteImport.update({
-  id: '/$productId',
-  path: '/$productId',
+const ShopPublicIdRoute = ShopPublicIdRouteImport.update({
+  id: '/$publicId',
+  path: '/$publicId',
   getParentRoute: () => ShopRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -140,7 +140,7 @@ export interface FileRoutesByFullPath {
   '/admin/classes': typeof AdminClassesRoute
   '/admin/products': typeof AdminProductsRouteWithChildren
   '/admin/users': typeof AdminUsersRoute
-  '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin/': typeof AdminIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/admin/products/$productId': typeof AdminProductsProductIdRoute
@@ -158,7 +158,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/classes': typeof AdminClassesRoute
   '/admin/users': typeof AdminUsersRoute
-  '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin': typeof AdminIndexRoute
   '/shop': typeof ShopIndexRoute
   '/admin/products/$productId': typeof AdminProductsProductIdRoute
@@ -180,7 +180,7 @@ export interface FileRoutesById {
   '/admin/classes': typeof AdminClassesRoute
   '/admin/products': typeof AdminProductsRouteWithChildren
   '/admin/users': typeof AdminUsersRoute
-  '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin/': typeof AdminIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/admin/products/$productId': typeof AdminProductsProductIdRoute
@@ -203,7 +203,7 @@ export interface FileRouteTypes {
     | '/admin/classes'
     | '/admin/products'
     | '/admin/users'
-    | '/shop/$productId'
+    | '/shop/$publicId'
     | '/admin/'
     | '/shop/'
     | '/admin/products/$productId'
@@ -221,7 +221,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/classes'
     | '/admin/users'
-    | '/shop/$productId'
+    | '/shop/$publicId'
     | '/admin'
     | '/shop'
     | '/admin/products/$productId'
@@ -242,7 +242,7 @@ export interface FileRouteTypes {
     | '/admin/classes'
     | '/admin/products'
     | '/admin/users'
-    | '/shop/$productId'
+    | '/shop/$publicId'
     | '/admin/'
     | '/shop/'
     | '/admin/products/$productId'
@@ -348,11 +348,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/shop/$productId': {
-      id: '/shop/$productId'
-      path: '/$productId'
-      fullPath: '/shop/$productId'
-      preLoaderRoute: typeof ShopProductIdRouteImport
+    '/shop/$publicId': {
+      id: '/shop/$publicId'
+      path: '/$publicId'
+      fullPath: '/shop/$publicId'
+      preLoaderRoute: typeof ShopPublicIdRouteImport
       parentRoute: typeof ShopRoute
     }
     '/admin/users': {
@@ -433,12 +433,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ShopRouteChildren {
-  ShopProductIdRoute: typeof ShopProductIdRoute
+  ShopPublicIdRoute: typeof ShopPublicIdRoute
   ShopIndexRoute: typeof ShopIndexRoute
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
-  ShopProductIdRoute: ShopProductIdRoute,
+  ShopPublicIdRoute: ShopPublicIdRoute,
   ShopIndexRoute: ShopIndexRoute,
 }
 

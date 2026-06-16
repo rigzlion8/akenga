@@ -1,4 +1,4 @@
-export { getProducts, getAllProducts, getProductById, createProduct, updateProduct, deleteProduct } from "./products.function";
+export { getProducts, getAllProducts, getProductById, getProductByPublicId, createProduct, updateProduct, deleteProduct } from "./products.function";
 export { getClasses, createClass, updateClass, deleteClass, submitEnrollment, getEnrollments } from "./classes.function";
 export { uploadImageFn } from "./image.function";
 export { getCategories, createCategory } from "./categories.function";

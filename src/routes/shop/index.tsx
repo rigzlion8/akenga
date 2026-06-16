@@ -95,8 +95,8 @@ function ShopIndex() {
           {filtered.map((p) => (
             <article key={p.id} className="group">
               <Link
-                to="/shop/$productId"
-                params={{ productId: String(p.id) }}
+                to="/shop/$publicId"
+                params={{ publicId: p.publicId }}
                 className="block relative aspect-square overflow-hidden bg-muted"
               >
                 <img src={p.images?.[0] ?? ""} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -106,8 +106,8 @@ function ShopIndex() {
               </Link>
               <p className="eyebrow mt-5">{p.category}</p>
               <Link
-                to="/shop/$productId"
-                params={{ productId: String(p.id) }}
+                to="/shop/$publicId"
+                params={{ publicId: p.publicId }}
                 className="block"
               >
                 <h3 className="font-serif text-xl md:text-2xl mt-2 hover:text-accent transition-colors">{p.name}</h3>
