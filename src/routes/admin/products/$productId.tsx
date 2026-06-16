@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Pencil } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { ArrowLeft, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getProductById } from "@/lib/api";
 
@@ -15,6 +15,7 @@ export const Route = createFileRoute("/admin/products/$productId")({
 function AdminProductDetail() {
   const { productId } = useParams({ from: "/admin/products/$productId" });
   const id = Number(productId);
+  const [activeImage, setActiveImage] = useState(0);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
@@ -46,6 +47,11 @@ function AdminProductDetail() {
 
   const isDeleted = product.status === "DELETED";
   const hasImages = product.images && product.images.length > 0;
+  const images: string[] = (product.images as string[]) ?? [];
+  const hasMultiple = images.length > 1;
+
+  const prevImage = () => setActiveImage((i) => (i - 1 + images.length) % images.length);
+  const nextImage = () => setActiveImage((i) => (i + 1) % images.length);
 
   return (
     <div className="max-w-5xl">
@@ -58,41 +64,73 @@ function AdminProductDetail() {
         Products
       </Link>
 
-      {/* Hero image */}
+      {/* Hero image with carousel */}
       {hasImages && (
-        <div className="aspect-[16/9] rounded-xl overflow-hidden bg-muted border border-border mb-8">
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
+        <div className="space-y-3 mb-8">
+          <div className="relative aspect-[16/9] rounded-xl overflow-hidden bg-muted border border-border">
+            <img
+              src={images[activeImage]}
+              alt={`${product.name} — image ${activeImage + 1}`}
+              className="w-full h-full object-cover"
+            />
+            {hasMultiple && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors cursor-pointer"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors cursor-pointer"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+                {/* Dot indicator */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                  {images.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImage(i)}
+                      className={`w-2 h-2 rounded-full transition-colors cursor-pointer ${
+                        i === activeImage ? "bg-white" : "bg-white/40 hover:bg-white/70"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Thumbnail strip */}
+          {hasMultiple && (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {images.map((url: string, i: number) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImage(i)}
+                  className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors cursor-pointer bg-muted ${
+                    i === activeImage
+                      ? "border-accent"
+                      : "border-border hover:border-muted-foreground/40"
+                  }`}
+                >
+                  <img
+                    src={url}
+                    alt={`${product.name} — thumbnail ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {!hasImages && (
         <div className="aspect-[16/9] rounded-xl bg-muted border border-border mb-8 flex items-center justify-center">
           <span className="text-muted-foreground text-sm">No images</span>
-        </div>
-      )}
-
-      {/* Thumbnail strip for multiple images */}
-      {hasImages && product.images.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-2 mb-8 -mt-4">
-          {product.images.map((url: string, i: number) => (
-            <a
-              key={i}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-20 h-20 shrink-0 rounded-lg overflow-hidden border-2 border-border hover:border-accent transition-colors bg-muted"
-            >
-              <img
-                src={url}
-                alt={`${product.name} — image ${i + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </a>
-          ))}
         </div>
       )}
 
