@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
@@ -94,14 +94,24 @@ function Shop() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-14 text-left">
           {filtered.map((p) => (
             <article key={p.id} className="group">
-              <div className="relative aspect-square overflow-hidden bg-muted">
+              <Link
+                to="/shop/$productId"
+                params={{ productId: String(p.id) }}
+                className="block relative aspect-square overflow-hidden bg-muted"
+              >
                 <img src={p.images?.[0] ?? ""} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 {p.tag ? (
                   <span className="absolute top-4 left-4 bg-foreground/90 text-background text-[0.65rem] tracking-[0.2em] uppercase px-3 py-1.5">{p.tag}</span>
                 ) : null}
-              </div>
+              </Link>
               <p className="eyebrow mt-5">{p.category}</p>
-              <h3 className="font-serif text-xl md:text-2xl mt-2">{p.name}</h3>
+              <Link
+                to="/shop/$productId"
+                params={{ productId: String(p.id) }}
+                className="block"
+              >
+                <h3 className="font-serif text-xl md:text-2xl mt-2 hover:text-accent transition-colors">{p.name}</h3>
+              </Link>
               <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                 <span className="text-sm text-foreground/80">{p.price}</span>
                 <button

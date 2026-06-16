@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useRef, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -437,7 +437,13 @@ function AdminProducts() {
                     )}
                   </TableCell>
                   <TableCell className="font-medium">
-                    <span className="line-clamp-1">{p.name}</span>
+                    <Link
+                      to="/admin/products/$productId"
+                      params={{ productId: String(p.id) }}
+                      className="line-clamp-1 text-foreground hover:text-accent transition-colors"
+                    >
+                      {p.name}
+                    </Link>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">{p.category}</TableCell>
                   <TableCell className="hidden md:table-cell">{p.tag || "—"}</TableCell>

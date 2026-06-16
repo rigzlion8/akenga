@@ -52,6 +52,18 @@ export const updateProduct = createServerFn({ method: "POST" })
     return product;
   });
 
+export const getProductById = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ id: z.number() }))
+  .handler(async ({ data }) => {
+    const db = getDb();
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, data.id));
+    if (!product) throw new Error("Product not found");
+    return product;
+  });
+
 export const deleteProduct = createServerFn({ method: "POST" })
   .inputValidator(z.object({ id: z.number() }))
   .handler(async ({ data }) => {
