@@ -438,8 +438,8 @@ function AdminProductsIndex() {
                   </TableCell>
                   <TableCell className="font-medium">
                     <Link
-                      to="/admin/products/$productId"
-                      params={{ productId: String(p.id) }}
+                      to="/admin/products/$publicId"
+                      params={{ publicId: p.publicId }}
                       className="line-clamp-1 text-foreground hover:text-accent transition-colors"
                     >
                       {p.name}

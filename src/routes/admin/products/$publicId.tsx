@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowLeft, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { getProductById } from "@/lib/api";
+import { getProductByPublicId } from "@/lib/api";
 
-export const Route = createFileRoute("/admin/products/$productId")({
+export const Route = createFileRoute("/admin/products/$publicId")({
   head: () => ({
     meta: [{ title: "Product Detail — Admin — Akenga Arts Centre" }],
   }),
@@ -13,14 +13,13 @@ export const Route = createFileRoute("/admin/products/$productId")({
 });
 
 function AdminProductDetail() {
-  const { productId } = useParams({ from: "/admin/products/$productId" });
-  const id = Number(productId);
+  const { publicId } = useParams({ from: "/admin/products/$publicId" });
   const [activeImage, setActiveImage] = useState(0);
 
   const { data: product, isLoading } = useQuery({
-    queryKey: ["product", id],
-    queryFn: () => getProductById({ data: { id } }),
-    enabled: !isNaN(id),
+    queryKey: ["product", "admin", publicId],
+    queryFn: () => getProductByPublicId({ data: { publicId } }),
+    enabled: !!publicId,
   });
 
   if (isLoading) {
@@ -55,7 +54,6 @@ function AdminProductDetail() {
 
   return (
     <div className="max-w-5xl">
-      {/* Breadcrumb */}
       <Link
         to="/admin/products"
         className="inline-flex items-center gap-1 text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-accent transition-colors mb-6"
@@ -64,7 +62,6 @@ function AdminProductDetail() {
         Products
       </Link>
 
-      {/* Hero image with carousel */}
       {hasImages && (
         <div className="space-y-3 mb-8">
           <div className="relative aspect-[16/9] rounded-xl overflow-hidden bg-muted border border-border">
@@ -87,7 +84,6 @@ function AdminProductDetail() {
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
-                {/* Dot indicator */}
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
                   {images.map((_, i) => (
                     <button
@@ -103,7 +99,6 @@ function AdminProductDetail() {
             )}
           </div>
 
-          {/* Thumbnail strip */}
           {hasMultiple && (
             <div className="flex gap-2 overflow-x-auto pb-1">
               {images.map((url: string, i: number) => (
@@ -134,9 +129,7 @@ function AdminProductDetail() {
         </div>
       )}
 
-      {/* Main content: two columns */}
       <div className={`grid lg:grid-cols-[1fr_300px] gap-8 ${isDeleted ? "opacity-50" : ""}`}>
-        {/* Left: product info */}
         <div className="space-y-6">
           <div>
             <p className="eyebrow">{product.category}</p>
@@ -164,7 +157,6 @@ function AdminProductDetail() {
           )}
         </div>
 
-        {/* Right: info panel */}
         <div className="space-y-4">
           <div className="rounded-xl border border-border p-5 space-y-4">
             <div>
