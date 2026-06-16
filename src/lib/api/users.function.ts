@@ -3,7 +3,10 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { users } from "../../db/schema";
-import { hashPassword } from "../auth";
+import { hashPassword, generateToken } from "../auth";
+import { sendEmail, renderActivationEmail } from "../email";
+
+const ADMIN_ROLES = ["admin", "operations", "finance"];
 
 async function validateAdmin(token: string) {
   const db = getDb();
@@ -13,7 +16,7 @@ async function validateAdmin(token: string) {
     .where(eq(users.sessionToken, token));
 
   if (!found) throw new Error("Unauthorized");
-  if (found.role !== "admin") throw new Error("Forbidden");
+  if (!ADMIN_ROLES.includes(found.role || "")) throw new Error("Forbidden");
   return found;
 }
 
@@ -44,7 +47,7 @@ export const createUser = createServerFn({ method: "POST" })
       email: z.string().email(),
       name: z.string().min(1),
       password: z.string().min(6),
-      role: z.string().optional(),
+      role: z.enum(["admin", "editor", "customer", "user", "guest", "premium", "operations", "finance"]).optional(),
     }),
   )
   .handler(async ({ data }) => {
@@ -58,13 +61,17 @@ export const createUser = createServerFn({ method: "POST" })
 
     if (existing) throw new Error("A user with this email already exists");
 
+    const activationToken = generateToken();
+
     const [user] = await db
       .insert(users)
       .values({
         email: data.email,
         name: data.name,
-        role: data.role || "admin",
+        role: data.role || "user",
         passwordHash: hashPassword(data.password),
+        activationToken,
+        activated: false,
       })
       .returning({
         id: users.id,
@@ -73,6 +80,14 @@ export const createUser = createServerFn({ method: "POST" })
         role: users.role,
         createdAt: users.createdAt,
       });
+
+    const activationUrl = `${process.env.APP_URL || "http://localhost:3000"}/activate?token=${activationToken}`;
+
+    await sendEmail(
+      data.email,
+      "Activate your Akenga Arts Centre account",
+      renderActivationEmail(data.name, activationUrl),
+    );
 
     return user;
   });
@@ -84,7 +99,7 @@ export const updateUser = createServerFn({ method: "POST" })
       id: z.number(),
       email: z.string().email().optional(),
       name: z.string().min(1).optional(),
-      role: z.string().optional(),
+      role: z.enum(["admin", "editor", "customer", "user", "guest", "premium", "operations", "finance"]).optional(),
     }),
   )
   .handler(async ({ data }) => {

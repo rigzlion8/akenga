@@ -26,14 +26,28 @@ export const createOrder = createServerFn({ method: "POST" })
     const db = getDb();
     const { items, ...orderData } = data;
 
+    const productStock = new Map<
+      number,
+      { inStock: boolean | null; status: string | null; stock: number | null }
+    >();
+
     for (const item of items) {
       const [product] = await db
-        .select({ inStock: products.inStock, status: products.status })
+        .select({ inStock: products.inStock, status: products.status, stock: products.stock })
         .from(products)
         .where(eq(products.id, item.productId));
+
       if (!product || !product.inStock || product.status === "DELETED") {
         throw new Error(`Product "${item.productName}" is no longer available.`);
       }
+
+      if (product.stock !== null && item.quantity > product.stock) {
+        throw new Error(
+          `Only ${product.stock} unit${product.stock === 1 ? "" : "s"} of "${item.productName}" available.`,
+        );
+      }
+
+      productStock.set(item.productId, product);
     }
 
     const [order] = await db.insert(orders).values(orderData).returning();
@@ -46,6 +60,15 @@ export const createOrder = createServerFn({ method: "POST" })
         price: item.price,
         quantity: item.quantity,
       });
+
+      const stored = productStock.get(item.productId)!;
+      if (stored.stock !== null) {
+        const newStock = stored.stock - item.quantity;
+        await db
+          .update(products)
+          .set({ stock: newStock, inStock: newStock > 0 })
+          .where(eq(products.id, item.productId));
+      }
     }
 
     return order;

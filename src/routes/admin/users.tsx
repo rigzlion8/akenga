@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Key, Search, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Key, Search, Loader2, Eye, EyeOff } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -74,6 +74,7 @@ function AdminUsers() {
   const [search, setSearch] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [pwSubmitting, setPwSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const token = getToken();
 
@@ -115,7 +116,8 @@ function AdminUsers() {
 
   const openCreate = () => {
     setEditingId(null);
-    reset({ email: "", name: "", password: "", role: "admin" });
+    reset({ email: "", name: "", password: "", role: "user" });
+    setShowPassword(false);
     setSheetOpen(true);
   };
 
@@ -182,7 +184,7 @@ function AdminUsers() {
         <div>
           <h1 className="font-serif text-3xl md:text-5xl">Users</h1>
           <p className="mt-2 text-muted-foreground text-sm">
-            Manage admin accounts. Passwords are hashed with scrypt.
+            Manage user accounts. New users receive an activation email.
           </p>
         </div>
 
@@ -213,7 +215,23 @@ function AdminUsers() {
               {!editingId && (
                 <div>
                   <Label htmlFor="password">Password *</Label>
-                  <Input id="password" type="password" {...register("password")} placeholder="Minimum 6 characters" />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      {...register("password")}
+                      placeholder="Minimum 6 characters"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                   {errors.password && <p className="text-xs text-destructive mt-1">{errors.password.message as string}</p>}
                 </div>
               )}
@@ -229,8 +247,14 @@ function AdminUsers() {
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="customer">Customer</SelectItem>
+                        <SelectItem value="guest">Guest</SelectItem>
+                        <SelectItem value="premium">Premium</SelectItem>
                         <SelectItem value="editor">Editor</SelectItem>
+                        <SelectItem value="finance">Finance</SelectItem>
+                        <SelectItem value="operations">Operations</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
                       </SelectContent>
                     </Select>
                   )}

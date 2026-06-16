@@ -28,6 +28,7 @@ const productSchema = z.object({
   description: z.string().optional(),
   images: z.array(z.string()).optional(),
   inStock: z.boolean().optional(),
+  stock: z.number().int().min(0).nullable().optional(),
 });
 
 export const createProduct = createServerFn({ method: "POST" })

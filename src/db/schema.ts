@@ -9,6 +9,7 @@ export const products = pgTable("products", {
   description: text("description"),
   images: text("images").array().default([]),
   inStock: boolean("in_stock").default(true),
+  stock: integer("stock"),
   status: text("status").default("ACTIVE"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -68,6 +69,8 @@ export const users = pgTable("users", {
   role: text("role").default("admin"),
   passwordHash: text("password_hash"),
   sessionToken: text("session_token"),
+  activationToken: text("activation_token"),
+  activated: boolean("activated").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -60,6 +60,10 @@ const formSchema = z.object({
   description: z.string().optional(),
   images: z.array(z.string()).optional(),
   inStock: z.boolean().optional(),
+  stock: z
+    .string()
+    .optional()
+    .refine((val) => !val || val === "" || /^\d+$/.test(val), "Must be a positive number"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -99,7 +103,7 @@ function AdminProducts() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { images: [], inStock: true },
+    defaultValues: { images: [], inStock: true, stock: "" },
   });
 
   const images = watch("images") || [];
@@ -118,7 +122,7 @@ function AdminProducts() {
 
   const openCreate = () => {
     setEditingId(null);
-    reset({ images: [], inStock: true });
+    reset({ images: [], inStock: true, stock: "" });
     setSheetOpen(true);
   };
 
@@ -132,6 +136,7 @@ function AdminProducts() {
       description: p.description || "",
       images: p.images || [],
       inStock: p.inStock ?? true,
+      stock: p.stock != null ? String(p.stock) : "",
     });
     setSheetOpen(true);
   };
@@ -176,11 +181,13 @@ function AdminProducts() {
   const onSubmit = async (data: FormValues) => {
     setSubmitting(true);
     try {
+      const stock = data.stock && data.stock !== "" ? parseInt(data.stock, 10) : null;
+      const payload = { ...data, stock };
       if (editingId) {
-        await updateProduct({ data: { id: editingId, ...data } });
+        await updateProduct({ data: { id: editingId, ...payload } });
         toast.success("Product updated");
       } else {
-        await createProduct({ data });
+        await createProduct({ data: payload });
         toast.success("Product created");
       }
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -365,6 +372,21 @@ function AdminProducts() {
                 />
               </div>
 
+              <div>
+                <Label htmlFor="stock">Stock (optional)</Label>
+                <Input
+                  id="stock"
+                  type="number"
+                  min="0"
+                  step="1"
+                  {...register("stock")}
+                  placeholder="Leave empty for unlimited"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Available units. If set, purchases are limited to this amount.
+                </p>
+              </div>
+
               <Button type="submit" className="w-full cursor-pointer" disabled={submitting}>
                 {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {editingId ? "Update Product" : "Create Product"}
@@ -421,8 +443,17 @@ function AdminProducts() {
                   <TableCell className="hidden md:table-cell">{p.tag || "—"}</TableCell>
                   <TableCell>{p.price}</TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Badge variant={p.status === "DELETED" ? "destructive" : "secondary"} className="text-[0.65rem]">
-                      {p.status === "DELETED" ? "Deleted" : p.inStock ? "Active" : "No stock"}
+                    <Badge
+                      variant={p.status === "DELETED" ? "destructive" : "secondary"}
+                      className="text-[0.65rem]"
+                    >
+                      {p.status === "DELETED"
+                        ? "Deleted"
+                        : p.stock != null
+                          ? `Stock: ${p.stock}`
+                          : p.inStock
+                            ? "Active"
+                            : "No stock"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">

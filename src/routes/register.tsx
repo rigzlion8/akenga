@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -24,15 +24,17 @@ export const Route = createFileRoute("/register")({
 });
 
 function Register() {
-  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [loginUrl, setLoginUrl] = useState("/login");
 
-  const loginUrl = useMemo(() => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get("redirect");
-    return redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login";
+    setLoginUrl(redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login");
   }, []);
+
   const {
     register,
     handleSubmit,
@@ -42,20 +44,29 @@ function Register() {
   const onSubmit = async (data: FormValues) => {
     setSubmitting(true);
     try {
-      const result = await registerUser({ data });
-      localStorage.setItem("auth_token", result.token);
-      localStorage.setItem("auth_user", JSON.stringify(result.user));
-      toast.success("Account created successfully");
-
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect");
-      navigate({ to: redirect || "/shop" } as any);
+      await registerUser({ data });
+      setRegistered(true);
+      toast.success("Account created! Check your email to activate.");
     } catch (e: any) {
       toast.error(e.message || "Registration failed");
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (registered) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4 pt-24 pb-12">
+        <div className="max-w-sm text-center">
+          <span className="inline-flex w-14 h-14 rounded-full border-2 border-accent items-center justify-center font-serif text-accent text-2xl">A</span>
+          <h1 className="font-serif text-2xl mt-4">Check Your Email</h1>
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+            We've sent an activation link to your email. Click the link to activate your account.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 pt-24 pb-12">
