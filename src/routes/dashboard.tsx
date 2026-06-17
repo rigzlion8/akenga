@@ -28,14 +28,15 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const qc = useQueryClient();
-  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => { const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : ""; return getCurrentUser({ data: { token } }); } });
-  const { data: allArtists } = useQuery({ queryKey: ["artists"], queryFn: () => getAllArtists() });
+  const { data: user, isLoading: userLoading } = useQuery({ queryKey: ["currentUser"], queryFn: () => { const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : ""; return getCurrentUser({ data: { token } }); } });
+  const { data: allArtists, isLoading: artistsLoading } = useQuery({ queryKey: ["artists"], queryFn: () => getAllArtists() });
   const artist = allArtists?.find((a: any) => a.userId === user?.id);
   const { data: artworks } = useQuery({ queryKey: ["artworks","artist",artist?.id], queryFn: () => getArtworksByArtist({ data: { artistId: artist!.id } }), enabled: !!artist?.id });
   const { data: exhibitions } = useQuery({ queryKey: ["exhibitions","artist",artist?.id], queryFn: () => getExhibitionsByArtist({ data: { artistId: artist!.id } }), enabled: !!artist?.id });
 
   const handleLogout = () => { logout(); localStorage.removeItem("auth_token"); localStorage.removeItem("auth_user"); window.location.href = "/"; };
 
+  if (userLoading || artistsLoading) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground text-sm">Loading...</p></div>;
   if (!user) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground">Please <Link to="/login" className="text-accent">sign in</Link>.</p></div>;
   if (user.role !== "artist" && user.role !== "admin") return <div className="min-h-screen flex flex-col items-center justify-center pt-20 gap-4"><p className="text-muted-foreground">Artist dashboard access only.</p><Link to="/" className="text-xs text-accent">Go Home</Link></div>;
   if (!artist) return <div className="min-h-screen flex flex-col items-center justify-center pt-20 gap-4"><p className="text-muted-foreground">No artist profile linked. Contact admin.</p><Link to="/" className="text-xs text-accent">Go Home</Link></div>;

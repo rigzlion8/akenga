@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { getAllArtists, createArtist, updateArtist, deleteArtist, uploadImageFn } from "@/lib/api";
 
@@ -24,6 +25,7 @@ const formSchema = z.object({
   instagram: z.string().optional(),
   tiktok: z.string().optional(),
   twitter: z.string().optional(),
+  profileVisible: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -54,6 +56,7 @@ function AdminArtists() {
       profileImage: a.profileImage || "", website: a.website || "",
       email: a.email || "", instagram: a.instagram || "",
       tiktok: a.tiktok || "", twitter: a.twitter || "",
+      profileVisible: a.profileVisible ?? false,
     });
     setOpen(true);
   };
@@ -183,6 +186,12 @@ function AdminArtists() {
               <div>
                 <Label htmlFor="bio">Bio</Label>
                 <Textarea id="bio" {...register("bio")} rows={4} />
+              </div>
+
+              {/* Profile Visibility */}
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <Label>Profile Visibility</Label>
+                <Switch checked={watch("profileVisible") || false} onCheckedChange={(v) => setValue("profileVisible", v)} />
               </div>
 
               <Button type="submit" className="w-full" disabled={submitting}>
