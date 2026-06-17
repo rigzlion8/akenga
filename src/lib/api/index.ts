@@ -2,7 +2,7 @@ export { getProducts, getAllProducts, getProductById, getProductByPublicId, crea
 export { getClasses, createClass, updateClass, deleteClass, submitEnrollment, getEnrollments } from "./classes.function";
 export { uploadImageFn } from "./image.function";
 export { getCategories, createCategory } from "./categories.function";
-export { login, getCurrentUser, logout, register, activateAccount } from "./auth.function";
+export { login, getCurrentUser, logout, register, activateAccount, forgotPassword, resetPassword } from "./auth.function";
 export { getUsers, createUser, updateUser, deleteUser, resetUserPassword } from "./users.function";
 export { createOrder, getOrders } from "./orders.function";
 export { getArtists, getAllArtists, getArtistByPublicId, createArtist, updateArtist, deleteArtist } from "./artists.function";

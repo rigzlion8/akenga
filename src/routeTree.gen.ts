@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ExhibitionsRouteImport } from './routes/exhibitions'
 import { Route as ClassesRouteImport } from './routes/classes'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -49,6 +51,11 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -57,6 +64,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExhibitionsRoute = ExhibitionsRouteImport.update({
@@ -194,8 +206,10 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
   '/exhibitions': typeof ExhibitionsRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRouteWithChildren
   '/studio': typeof StudioRoute
   '/admin/artists': typeof AdminArtistsRoute
@@ -222,8 +236,10 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/studio': typeof StudioRoute
   '/admin/artists': typeof AdminArtistsRoute
   '/admin/artworks': typeof AdminArtworksRoute
@@ -252,8 +268,10 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
   '/exhibitions': typeof ExhibitionsRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRouteWithChildren
   '/studio': typeof StudioRoute
   '/admin/artists': typeof AdminArtistsRoute
@@ -285,8 +303,10 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/classes'
     | '/exhibitions'
+    | '/forgot-password'
     | '/login'
     | '/register'
+    | '/reset-password'
     | '/shop'
     | '/studio'
     | '/admin/artists'
@@ -313,8 +333,10 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/classes'
+    | '/forgot-password'
     | '/login'
     | '/register'
+    | '/reset-password'
     | '/studio'
     | '/admin/artists'
     | '/admin/artworks'
@@ -342,8 +364,10 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/classes'
     | '/exhibitions'
+    | '/forgot-password'
     | '/login'
     | '/register'
+    | '/reset-password'
     | '/shop'
     | '/studio'
     | '/admin/artists'
@@ -374,8 +398,10 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ClassesRoute: typeof ClassesRoute
   ExhibitionsRoute: typeof ExhibitionsRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ShopRoute: typeof ShopRouteWithChildren
   StudioRoute: typeof StudioRoute
   ArtworksPublicIdRoute: typeof ArtworksPublicIdRoute
@@ -397,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -409,6 +442,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exhibitions': {
@@ -675,8 +715,10 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ClassesRoute: ClassesRoute,
   ExhibitionsRoute: ExhibitionsRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ShopRoute: ShopRouteWithChildren,
   StudioRoute: StudioRoute,
   ArtworksPublicIdRoute: ArtworksPublicIdRoute,

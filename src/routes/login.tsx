@@ -93,7 +93,13 @@ function SignIn() {
           </Button>
         </form>
 
-        <p className="text-xs text-muted-foreground text-center mt-6">
+        <p className="text-xs text-muted-foreground text-center mt-4">
+          <Link to="/forgot-password" className="hover:text-accent transition-colors">
+            Forgot password?
+          </Link>
+        </p>
+
+        <p className="text-xs text-muted-foreground text-center mt-4">
           Don't have an account?{" "}
           <Link to="/register" className="text-accent hover:underline">
             Register

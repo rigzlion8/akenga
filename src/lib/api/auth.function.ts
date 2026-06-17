@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { users } from "../../db/schema";
 import { hashPassword, verifyPassword, generateToken } from "../auth";
-import { sendEmail, renderActivationEmail } from "../email";
+import { sendEmail, renderActivationEmail, renderResetEmail } from "../email";
 
 const userSelect = {
   id: users.id,
@@ -169,4 +169,38 @@ export const activateAccount = createServerFn({ method: "POST" })
       user: { id: found.id, email: found.email, name: found.name },
       token: sessionToken,
     };
+  });
+
+export const forgotPassword = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ email: z.string().email() }))
+  .handler(async ({ data }) => {
+    const db = getDb();
+    const [user] = await db.select({ id: users.id, email: users.email, name: users.name, activated: users.activated }).from(users).where(eq(users.email, data.email));
+    // Always return success to prevent email enumeration
+    if (!user || !user.activated) return { ok: true };
+
+    const resetToken = generateToken();
+    const expires = new Date(Date.now() + 3600000); // 1 hour
+
+    await db.update(users).set({ resetToken, resetTokenExpires: expires }).where(eq(users.id, user.id));
+
+    const resetUrl = `${process.env.APP_URL || "https://akenga.vercel.app"}/reset-password?token=${resetToken}`;
+    await sendEmail(user.email, "Reset your Akenga password", renderResetEmail(user.name, resetUrl));
+
+    return { ok: true };
+  });
+
+export const resetPassword = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ token: z.string().min(1), password: z.string().min(6) }))
+  .handler(async ({ data }) => {
+    const db = getDb();
+    const [user] = await db.select({ id: users.id, name: users.name, resetTokenExpires: users.resetTokenExpires }).from(users).where(eq(users.resetToken, data.token));
+    if (!user) throw new Error("Invalid or expired reset link");
+    if (!user.resetTokenExpires || new Date(user.resetTokenExpires) < new Date()) throw new Error("Reset link has expired");
+
+    const passwordHash = await hashPassword(data.password);
+
+    await db.update(users).set({ passwordHash, resetToken: null, resetTokenExpires: null }).where(eq(users.id, user.id));
+
+    return { ok: true };
   });
