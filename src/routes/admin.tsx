@@ -192,7 +192,9 @@ function AdminLayout() {
       </Sidebar>
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border/60 px-6">
-          <SidebarTrigger />
+          <SidebarTrigger className="md:hidden" />
+          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground md:hidden">Menu</span>
+          <SidebarTrigger className="hidden md:flex" />
           <Link to="/" className="text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-accent transition-colors ml-auto">
             Back to Site
           </Link>
