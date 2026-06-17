@@ -30,7 +30,7 @@ function Dashboard() {
   const qc = useQueryClient();
   const { data: user, isLoading: userLoading } = useQuery({ queryKey: ["currentUser"], queryFn: () => { const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : ""; return getCurrentUser({ data: { token } }); } });
   const { data: allArtists, isLoading: artistsLoading } = useQuery({ queryKey: ["artists"], queryFn: () => getAllArtists() });
-  const artist = allArtists?.find((a: any) => a.userId === user?.id);
+  const artist = allArtists?.find((a: any) => a.userId === user?.id) || allArtists?.find((a: any) => a.email === user?.email);
   const { data: artworks } = useQuery({ queryKey: ["artworks","artist",artist?.id], queryFn: () => getArtworksByArtist({ data: { artistId: artist!.id } }), enabled: !!artist?.id });
   const { data: exhibitions } = useQuery({ queryKey: ["exhibitions","artist",artist?.id], queryFn: () => getExhibitionsByArtist({ data: { artistId: artist!.id } }), enabled: !!artist?.id });
 
