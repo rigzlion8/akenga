@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useRef } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod"; import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Plus, Pencil, Loader2, Upload, X, LogOut, Palette, Trash2 } from "lucide-react";
@@ -171,7 +171,16 @@ function AddExhibition({ artistId, qc }: { artistId: number; qc: any }) {
       <div className="grid grid-cols-2 gap-3"><div><Label>Start Date</Label><Input type="date" {...register("startDate")}/></div><div><Label>End Date</Label><Input type="date" {...register("endDate")}/></div></div>
       <div className="grid grid-cols-2 gap-3"><div><Label>Location</Label><Input {...register("location")}/></div><div><Label>Venue</Label><Input {...register("venue")}/></div></div>
       <div><Label>Guest Appearances</Label><Input {...register("guestAppearances")}/></div>
-      <div><Label>Ticket Type</Label><Controller name="ticketType" control={undefined} render={()=><Select value="FREE" onValueChange={v=>setValue("ticketType",v as any)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="FREE">Free</SelectItem><SelectItem value="PAID">Paid</SelectItem><SelectItem value="BUNDLE">Bundle</SelectItem></SelectContent></Select>}/></div>
+      <div><Label>Ticket Type</Label>
+        <Select value={watch("ticketType") || "FREE"} onValueChange={v => setValue("ticketType", v as any)}>
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="FREE">Free</SelectItem>
+            <SelectItem value="PAID">Paid</SelectItem>
+            <SelectItem value="BUNDLE">Bundle</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <div><Label>Price</Label><Input {...register("ticketPrice")}/></div>
       <div><Label>Ticket URL</Label><Input {...register("ticketUrl")}/></div>
       <div><Label>Description</Label><Textarea {...register("description")} rows={3}/></div>
