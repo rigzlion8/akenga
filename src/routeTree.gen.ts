@@ -26,6 +26,7 @@ import { Route as ExhibitionsIndexRouteImport } from './routes/exhibitions/index
 import { Route as ArtistsIndexRouteImport } from './routes/artists/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ShopPublicIdRouteImport } from './routes/shop/$publicId'
+import { Route as ExhibitionsPublicIdRouteImport } from './routes/exhibitions/$publicId'
 import { Route as ArtworksPublicIdRouteImport } from './routes/artworks/$publicId'
 import { Route as ArtistsPublicIdRouteImport } from './routes/artists/$publicId'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
@@ -123,6 +124,11 @@ const ShopPublicIdRoute = ShopPublicIdRouteImport.update({
   path: '/$publicId',
   getParentRoute: () => ShopRoute,
 } as any)
+const ExhibitionsPublicIdRoute = ExhibitionsPublicIdRouteImport.update({
+  id: '/$publicId',
+  path: '/$publicId',
+  getParentRoute: () => ExhibitionsRoute,
+} as any)
 const ArtworksPublicIdRoute = ArtworksPublicIdRouteImport.update({
   id: '/artworks/$publicId',
   path: '/artworks/$publicId',
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/artists/$publicId': typeof ArtistsPublicIdRoute
   '/artworks/$publicId': typeof ArtworksPublicIdRoute
+  '/exhibitions/$publicId': typeof ExhibitionsPublicIdRoute
   '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin/': typeof AdminIndexRoute
   '/artists/': typeof ArtistsIndexRoute
@@ -226,6 +233,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/artists/$publicId': typeof ArtistsPublicIdRoute
   '/artworks/$publicId': typeof ArtworksPublicIdRoute
+  '/exhibitions/$publicId': typeof ExhibitionsPublicIdRoute
   '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin': typeof AdminIndexRoute
   '/artists': typeof ArtistsIndexRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/artists/$publicId': typeof ArtistsPublicIdRoute
   '/artworks/$publicId': typeof ArtworksPublicIdRoute
+  '/exhibitions/$publicId': typeof ExhibitionsPublicIdRoute
   '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin/': typeof AdminIndexRoute
   '/artists/': typeof ArtistsIndexRoute
@@ -289,6 +298,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/artists/$publicId'
     | '/artworks/$publicId'
+    | '/exhibitions/$publicId'
     | '/shop/$publicId'
     | '/admin/'
     | '/artists/'
@@ -314,6 +324,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/artists/$publicId'
     | '/artworks/$publicId'
+    | '/exhibitions/$publicId'
     | '/shop/$publicId'
     | '/admin'
     | '/artists'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/artists/$publicId'
     | '/artworks/$publicId'
+    | '/exhibitions/$publicId'
     | '/shop/$publicId'
     | '/admin/'
     | '/artists/'
@@ -490,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopPublicIdRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/exhibitions/$publicId': {
+      id: '/exhibitions/$publicId'
+      path: '/$publicId'
+      fullPath: '/exhibitions/$publicId'
+      preLoaderRoute: typeof ExhibitionsPublicIdRouteImport
+      parentRoute: typeof ExhibitionsRoute
+    }
     '/artworks/$publicId': {
       id: '/artworks/$publicId'
       path: '/artworks/$publicId'
@@ -622,10 +641,12 @@ const ArtistsRouteWithChildren =
   ArtistsRoute._addFileChildren(ArtistsRouteChildren)
 
 interface ExhibitionsRouteChildren {
+  ExhibitionsPublicIdRoute: typeof ExhibitionsPublicIdRoute
   ExhibitionsIndexRoute: typeof ExhibitionsIndexRoute
 }
 
 const ExhibitionsRouteChildren: ExhibitionsRouteChildren = {
+  ExhibitionsPublicIdRoute: ExhibitionsPublicIdRoute,
   ExhibitionsIndexRoute: ExhibitionsIndexRoute,
 }
 
