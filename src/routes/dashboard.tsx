@@ -104,14 +104,33 @@ function Section({ title, count, createLabel, children, qc, artistId }: any) {
 function EditProfile({ artist, qc }: { artist: any; qc: any }) {
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false); const fr = useRef<HTMLInputElement>(null);
-  const { register, handleSubmit, setValue, watch, reset } = useForm<AF>({ resolver: zodResolver(artistSchema), defaultValues: artist });
+  const [open, setOpen] = useState(false);
+  const { register, handleSubmit, setValue, watch, reset } = useForm<AF>({ resolver: zodResolver(artistSchema) });
   const img = watch("profileImage");
   const u = async (f:File):Promise<string> => new Promise((r,j)=>{const rd=new FileReader();rd.onload=async()=>{const u=await uploadImageFn({data:{base64:rd.result as string,filename:f.name,alt:f.name}});r(u.url)};rd.onerror=j;rd.readAsDataURL(f)});
+
+  const handleOpen = (o: boolean) => {
+    setOpen(o);
+    if (o && artist) {
+      reset({
+        name: artist.name || "",
+        bio: artist.bio || "",
+        nationality: artist.nationality || "",
+        website: artist.website || "",
+        instagram: artist.instagram || "",
+        tiktok: artist.tiktok || "",
+        twitter: artist.twitter || "",
+        profileImage: artist.profileImage || "",
+        profileVisible: artist.profileVisible ?? false,
+      });
+    }
+  };
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={handleOpen}>
       <SheetTrigger asChild><Button variant="outline" size="sm"><Pencil className="h-3.5 w-3.5 mr-1"/>Edit Profile</Button></SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto"><SheetHeader className="mb-6"><SheetTitle>Edit Profile</SheetTitle></SheetHeader>
-        <form onSubmit={handleSubmit(async(d)=>{setSubmitting(true);try{await updateArtist({data:{...d,id:artist.id}});toast.success("Saved");qc.invalidateQueries()}catch{toast.error("Failed")}finally{setSubmitting(false)}})} className="space-y-4">
+        <form onSubmit={handleSubmit(async(d)=>{setSubmitting(true);try{await updateArtist({data:{...d,id:artist.id}});toast.success("Saved");qc.invalidateQueries();setOpen(false)}catch{toast.error("Failed")}finally{setSubmitting(false)}})} className="space-y-4">
           <div><Label>Name *</Label><Input {...register("name")}/></div>
           <div><Label>Nationality</Label><Input {...register("nationality")}/></div>
           <div><Label>Website</Label><Input {...register("website")}/></div>
