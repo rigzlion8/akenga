@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod"; import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus, Pencil, Loader2, Upload, X, LogOut, Palette, Trash2 } from "lucide-react";
+import { Plus, Pencil, Loader2, Upload, X, LogOut, Palette, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label"; import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch"; import { Badge } from "@/components/ui/badge";
@@ -36,10 +36,33 @@ function Dashboard() {
 
   const handleLogout = () => { logout(); localStorage.removeItem("auth_token"); localStorage.removeItem("auth_user"); window.location.href = "/"; };
 
-  if (userLoading || artistsLoading) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground text-sm">Loading...</p></div>;
+  if (userLoading) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground text-sm">Loading...</p></div>;
   if (!user) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground">Please <Link to="/login" className="text-accent">sign in</Link>.</p></div>;
-  if (user.role !== "artist" && user.role !== "admin") return <div className="min-h-screen flex flex-col items-center justify-center pt-20 gap-4"><p className="text-muted-foreground">Artist dashboard access only.</p><Link to="/" className="text-xs text-accent">Go Home</Link></div>;
-  if (!artist) return <div className="min-h-screen flex flex-col items-center justify-center pt-20 gap-4"><p className="text-muted-foreground">No artist profile linked. Contact admin.</p><Link to="/" className="text-xs text-accent">Go Home</Link></div>;
+
+  // User dashboard (no artist profile)
+  if (!artist) {
+    return (
+      <div className="min-h-screen pt-24 pb-16 max-w-2xl mx-auto px-6 lg:px-10">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="font-serif text-2xl md:text-3xl">Welcome, {user.name}</h1>
+            <p className="text-xs text-muted-foreground mt-1">{user.email}</p>
+          </div>
+          <Button variant="ghost" size="icon" onClick={handleLogout}><LogOut className="h-4 w-4"/></Button>
+        </div>
+        <div className="rounded-xl border border-border p-8 text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-muted mx-auto flex items-center justify-center"><User className="h-6 w-6 text-muted-foreground"/></div>
+          <p className="text-sm text-muted-foreground">You're signed in as a regular user.</p>
+          <div className="flex justify-center gap-4">
+            <Link to="/shop" className="text-xs tracking-[0.2em] uppercase text-accent hover:underline">Browse Shop</Link>
+            <Link to="/classes" className="text-xs tracking-[0.2em] uppercase text-accent hover:underline">Classes</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Artist dashboard
 
   return (
     <div className="min-h-screen pt-24 pb-16 max-w-5xl mx-auto px-6 lg:px-10">
