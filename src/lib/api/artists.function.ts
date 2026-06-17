@@ -36,8 +36,12 @@ const artistSchema = z.object({
   name: z.string().min(1),
   bio: z.string().optional(),
   profileImage: z.string().optional(),
+  nationality: z.string().optional(),
   website: z.string().optional(),
   email: z.string().email().optional().or(z.literal("")),
+  instagram: z.string().optional(),
+  tiktok: z.string().optional(),
+  twitter: z.string().optional(),
   userId: z.number().nullable().optional(),
 });
 

@@ -66,6 +66,10 @@ function ArtistProfile() {
             <p className="eyebrow">Artist Profile</p>
             <h1 className="font-serif text-4xl md:text-6xl mt-3">{artist.name}</h1>
 
+            {artist.nationality && (
+              <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground mt-2">{artist.nationality}</p>
+            )}
+
             <div className="flex flex-wrap gap-4 mt-6">
               {artist.email && (
                 <a href={`mailto:${artist.email}`} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent transition-colors">
@@ -78,6 +82,21 @@ function ArtistProfile() {
                 </a>
               )}
             </div>
+
+            {/* Social links */}
+            {(artist.instagram || artist.tiktok || artist.twitter) && (
+              <div className="flex flex-wrap gap-3 mt-3">
+                {artist.instagram && (
+                  <a href={artist.instagram.startsWith("http") ? artist.instagram : `https://instagram.com/${artist.instagram.replace("@", "")}`} target="_blank" rel="noopener" className="text-xs text-muted-foreground hover:text-accent transition-colors">Instagram ↗</a>
+                )}
+                {artist.tiktok && (
+                  <a href={artist.tiktok.startsWith("http") ? artist.tiktok : `https://tiktok.com/${artist.tiktok.replace("@", "")}`} target="_blank" rel="noopener" className="text-xs text-muted-foreground hover:text-accent transition-colors">TikTok ↗</a>
+                )}
+                {artist.twitter && (
+                  <a href={artist.twitter.startsWith("http") ? artist.twitter : `https://x.com/${artist.twitter.replace("@", "")}`} target="_blank" rel="noopener" className="text-xs text-muted-foreground hover:text-accent transition-colors">X ↗</a>
+                )}
+              </div>
+            )}
 
             <div className="h-px w-24 bg-accent/50 my-8" />
 
