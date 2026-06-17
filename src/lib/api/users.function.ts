@@ -47,7 +47,7 @@ export const createUser = createServerFn({ method: "POST" })
       email: z.string().email(),
       name: z.string().min(1),
       password: z.string().min(6),
-      role: z.enum(["admin", "editor", "customer", "user", "guest", "premium", "operations", "finance"]).optional(),
+      role: z.enum(["admin", "editor", "customer", "user", "guest", "premium", "operations", "finance", "artist"]).optional(),
     }),
   )
   .handler(async ({ data }) => {
@@ -99,7 +99,7 @@ export const updateUser = createServerFn({ method: "POST" })
       id: z.number(),
       email: z.string().email().optional(),
       name: z.string().min(1).optional(),
-      role: z.enum(["admin", "editor", "customer", "user", "guest", "premium", "operations", "finance"]).optional(),
+      role: z.enum(["admin", "editor", "customer", "user", "guest", "premium", "operations", "finance", "artist"]).optional(),
     }),
   )
   .handler(async ({ data }) => {

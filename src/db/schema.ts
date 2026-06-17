@@ -76,6 +76,41 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const artists = pgTable("artists", {
+  id: serial("id").primaryKey(),
+  publicId: uuid("public_id").defaultRandom().notNull().unique(),
+  name: text("name").notNull(),
+  bio: text("bio"),
+  profileImage: text("profile_image"),
+  website: text("website"),
+  email: text("email"),
+  userId: integer("user_id").references(() => users.id),
+  status: text("status").default("ACTIVE"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const artworks = pgTable("artworks", {
+  id: serial("id").primaryKey(),
+  publicId: uuid("public_id").defaultRandom().notNull().unique(),
+  artistId: integer("artist_id").notNull().references(() => artists.id),
+  title: text("title").notNull(),
+  description: text("description"),
+  medium: text("medium"),
+  dimensions: text("dimensions"),
+  year: text("year"),
+  images: text("images").array().default([]),
+  category: text("category"),
+  tag: text("tag"),
+  isForSale: boolean("is_for_sale").default(false),
+  price: text("price"),
+  productId: integer("product_id").references(() => products.id),
+  featured: boolean("featured").default(false),
+  status: text("status").default("ACTIVE"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const uploads = pgTable("uploads", {
   id: serial("id").primaryKey(),
   filename: text("filename").notNull(),

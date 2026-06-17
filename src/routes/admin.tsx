@@ -19,7 +19,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Boxes, FolderTree, Users, LayoutDashboard, GraduationCap, LogOut } from "lucide-react";
+import { Boxes, FolderTree, Users, LayoutDashboard, GraduationCap, LogOut, Palette, Brush } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, logout } from "@/lib/api";
@@ -137,6 +137,26 @@ function AdminLayout() {
                       <SidebarMenuButton isActive={isActive} tooltip="Categories">
                         <FolderTree className="h-4 w-4" />
                         <span>Categories</span>
+                      </SidebarMenuButton>
+                    )}
+                  </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Link to="/admin/artists">
+                    {({ isActive }) => (
+                      <SidebarMenuButton isActive={isActive} tooltip="Artists">
+                        <Palette className="h-4 w-4" />
+                        <span>Artists</span>
+                      </SidebarMenuButton>
+                    )}
+                  </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Link to="/admin/artworks">
+                    {({ isActive }) => (
+                      <SidebarMenuButton isActive={isActive} tooltip="Artworks">
+                        <Brush className="h-4 w-4" />
+                        <span>Artworks</span>
                       </SidebarMenuButton>
                     )}
                   </Link>
