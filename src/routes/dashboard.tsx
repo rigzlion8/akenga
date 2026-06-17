@@ -28,7 +28,7 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const qc = useQueryClient();
-  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => getCurrentUser() });
+  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => { const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : ""; return getCurrentUser({ data: { token } }); } });
   const { data: allArtists } = useQuery({ queryKey: ["artists"], queryFn: () => getAllArtists() });
   const artist = allArtists?.find((a: any) => a.userId === user?.id);
   const { data: artworks } = useQuery({ queryKey: ["artworks","artist",artist?.id], queryFn: () => getArtworksByArtist({ data: { artistId: artist!.id } }), enabled: !!artist?.id });
