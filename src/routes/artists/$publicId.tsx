@@ -49,7 +49,7 @@ function ArtistProfile() {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           {/* Portrait */}
           <div className="relative">
-            <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted border border-border">
+            <div className="aspect-[4/5] sm:aspect-[3/4] rounded-2xl overflow-hidden bg-muted border border-border">
               {artist.profileImage ? (
                 <img src={artist.profileImage} alt={artist.name} className="w-full h-full object-cover" />
               ) : (
@@ -127,7 +127,7 @@ function ArtistProfile() {
                     params={{ publicId: aw.publicId }}
                     className="w-full shrink-0 group"
                   >
-                    <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-muted">
+                    <div className="aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-muted">
                       <img
                         src={aw.images?.[0] ?? ""}
                         alt={aw.title}

@@ -21,7 +21,7 @@ function ArtistsIndex() {
     <>
       <section className="pt-36 pb-16 max-w-7xl mx-auto px-6 lg:px-10">
         <p className="eyebrow">The Collective</p>
-        <h1 className="font-serif text-5xl md:text-7xl mt-4">Artist Profiles</h1>
+        <h1 className="font-serif text-4xl md:text-7xl mt-4">Artist Profiles</h1>
         <p className="mt-6 max-w-2xl text-muted-foreground leading-relaxed">
           Meet the creative voices behind Akenga — a rotating collective of painters, sculptors, digital artists, and artisans shaping contemporary African art.
         </p>
@@ -63,7 +63,7 @@ function ArtistsIndex() {
                 className="block"
               >
                 {/* Portrait card */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-muted rounded-xl border border-border">
+                <div className="relative aspect-[4/5] sm:aspect-[3/4] overflow-hidden bg-muted rounded-xl border border-border">
                   {a.profileImage ? (
                     <img
                       src={a.profileImage}
