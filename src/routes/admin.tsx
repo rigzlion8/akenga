@@ -19,7 +19,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Boxes, FolderTree, Users, LayoutDashboard, GraduationCap, LogOut, Palette, Brush } from "lucide-react";
+import { Boxes, FolderTree, Users, LayoutDashboard, GraduationCap, LogOut, Palette, Brush, PanelLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, logout } from "@/lib/api";
@@ -192,8 +192,6 @@ function AdminLayout() {
       </Sidebar>
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border/60 px-6">
-          <SidebarTrigger className="md:hidden" />
-          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground md:hidden">Menu</span>
           <SidebarTrigger className="hidden md:flex" />
           <Link to="/" className="text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-accent transition-colors ml-auto">
             Back to Site
@@ -201,6 +199,13 @@ function AdminLayout() {
         </header>
         <div className="flex-1 p-6 lg:p-10">
           <Outlet />
+        </div>
+        {/* Mobile floating admin menu button */}
+        <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+          <SidebarTrigger className="h-12 px-6 rounded-full bg-accent text-accent-foreground shadow-lg hover:bg-accent/90 text-sm font-medium gap-2">
+            <PanelLeft className="h-4 w-4" />
+            Admin Menu
+          </SidebarTrigger>
         </div>
       </SidebarInset>
     </SidebarProvider>
