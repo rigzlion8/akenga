@@ -44,7 +44,7 @@ function AdminArtworks() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const { data: list } = useQuery({ queryKey: ["artworks", "admin"], queryFn: () => getArtworks() });
-  const { data: artistList } = useQuery({ queryKey: ["artists"], queryFn: () => getAllArtists() });
+  const { data: artistList } = useQuery({ queryKey: ["allArtists"], queryFn: () => getAllArtists() });
 
   const { register, handleSubmit, reset, setValue, watch, getValues, control, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),

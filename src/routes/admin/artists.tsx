@@ -40,7 +40,7 @@ function AdminArtists() {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const { data: list } = useQuery({ queryKey: ["artists", "admin"], queryFn: () => getAllArtists() });
+  const { data: list } = useQuery({ queryKey: ["allArtists", "admin"], queryFn: () => getAllArtists() });
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -89,7 +89,7 @@ function AdminArtists() {
         await createArtist({ data });
         toast.success("Artist created");
       }
-      qc.invalidateQueries({ queryKey: ["artists"] });
+      qc.invalidateQueries({ queryKey: ["allArtists"] });
       setOpen(false);
     } catch { toast.error("Failed"); }
     finally { setSubmitting(false); }
@@ -99,7 +99,7 @@ function AdminArtists() {
     if (!confirm(`Delete "${name}"?`)) return;
     await deleteArtist({ data: { id } });
     toast.success("Artist deleted");
-    qc.invalidateQueries({ queryKey: ["artists"] });
+    qc.invalidateQueries({ queryKey: ["allArtists"] });
   };
 
   return (

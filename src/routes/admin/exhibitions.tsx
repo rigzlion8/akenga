@@ -31,7 +31,7 @@ function AdminExhibitions() {
   const [submitting, setSubmitting] = useState(false); const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { data: list } = useQuery({ queryKey: ["exhibitions", "admin"], queryFn: () => getExhibitions() });
-  const { data: artists } = useQuery({ queryKey: ["artists"], queryFn: () => getAllArtists() });
+  const { data: artists } = useQuery({ queryKey: ["allArtists"], queryFn: () => getAllArtists() });
   const { register, handleSubmit, reset, setValue, watch, getValues, control, formState: { errors } } = useForm<F>({ resolver: zodResolver(schema), defaultValues: { images: [], isLive: false, featured: false, ticketType: "FREE" } });
   const images = watch("images") || [];
 

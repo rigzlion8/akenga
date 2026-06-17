@@ -38,7 +38,7 @@ function AdminDashboard() {
   });
 
   const { data: artists } = useQuery({
-    queryKey: ["artists"],
+    queryKey: ["allArtists"],
     queryFn: () => getAllArtists(),
   });
 
