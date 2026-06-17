@@ -231,6 +231,11 @@ function SiteHeader() {
               Admin
             </Link>
           )}
+          {!loggedIn && (
+            <Link to="/login" className={linkClass} activeProps={{ className: activeClass }}>
+              Login
+            </Link>
+          )}
         </nav>
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -283,6 +288,15 @@ function SiteHeader() {
                     Sign Out
                   </button>
                 </>
+              )}
+              {!loggedIn && (
+                <Link
+                  to="/login"
+                  className={mobileLinkClass}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Login
+                </Link>
               )}
             </nav>
           </SheetContent>

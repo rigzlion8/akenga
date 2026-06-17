@@ -84,7 +84,7 @@ function AdminLayout() {
     localStorage.removeItem("auth_user");
     queryClient.clear();
     toast.success("Signed out");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (
