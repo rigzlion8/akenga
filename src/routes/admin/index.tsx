@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts, getCategories, getUsers, getClasses } from "@/lib/api";
 import { getAllArtists } from "@/lib/api";
-import { Boxes, FolderTree, Users, GraduationCap, Palette } from "lucide-react";
+import { getExhibitions } from "@/lib/api";
+import { Boxes, FolderTree, Users, GraduationCap, Palette, CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -41,9 +42,15 @@ function AdminDashboard() {
     queryFn: () => getAllArtists(),
   });
 
+  const { data: exhibitions } = useQuery({
+    queryKey: ["exhibitions"],
+    queryFn: () => getExhibitions(),
+  });
+
   const stats = [
     { label: "Products", value: products?.length ?? "—", icon: Boxes, to: "/admin/products" },
     { label: "Artists", value: artists?.length ?? "—", icon: Palette, to: "/admin/artists" },
+    { label: "Exhibitions", value: exhibitions?.length ?? "—", icon: CalendarDays, to: "/admin/exhibitions" },
     { label: "Classes", value: classes?.length ?? "—", icon: GraduationCap, to: "/admin/classes" },
     { label: "Categories", value: categories?.length ?? "—", icon: FolderTree, to: "/admin/categories" },
     { label: "Users", value: users?.length ?? "—", icon: Users, to: "/admin/users" },
@@ -54,7 +61,7 @@ function AdminDashboard() {
       <h1 className="font-serif text-3xl md:text-5xl">Dashboard</h1>
       <p className="mt-2 text-muted-foreground">Overview of your Akenga Arts Centre content.</p>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-10">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mt-10">
         {stats.map((s) => (
           <Link
             key={s.label}
