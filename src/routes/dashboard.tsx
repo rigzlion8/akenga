@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"; import { Textarea } from "@/compo
 import { Switch } from "@/components/ui/switch"; import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { getCurrentUser, logout, getAllArtists, getArtworksByArtist, getArtworks, getExhibitionsByArtist, createArtwork, updateArtwork, deleteArtwork, createExhibition, getExhibitions, uploadImageFn, updateArtist } from "@/lib/api";
+import { getCurrentUser, logout, getAllArtists, getArtistByUserId, getArtworksByArtist, getArtworks, getExhibitionsByArtist, createArtwork, updateArtwork, deleteArtwork, createExhibition, getExhibitions, uploadImageFn, updateArtist } from "@/lib/api";
 
 const awSchema = z.object({ title: z.string().min(1), description: z.string().optional(), medium: z.string().optional(), dimensions: z.string().optional(), year: z.string().optional(), images: z.array(z.string()).optional(), category: z.string().optional(), isForSale: z.boolean().optional(), price: z.string().optional() });
 type AW = z.infer<typeof awSchema>;
@@ -29,8 +29,9 @@ export const Route = createFileRoute("/dashboard")({
 function Dashboard() {
   const qc = useQueryClient();
   const { data: user, isLoading: userLoading } = useQuery({ queryKey: ["currentUser"], queryFn: () => { const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : ""; return getCurrentUser({ data: { token } }); } });
-  const { data: allArtists, isLoading: artistsLoading } = useQuery({ queryKey: ["allArtists"], queryFn: () => getAllArtists() });
-  const artist = allArtists?.find((a: any) => a.userId === user?.id) || allArtists?.find((a: any) => a.email === user?.email);
+  const { data: allArtists, isLoading: artistsLoading } = useQuery({ queryKey: ["allArtists"], queryFn: () => getAllArtists(), staleTime: 0 });
+  const { data: linkedArtist } = useQuery({ queryKey: ["artistByUser", user?.id], queryFn: () => getArtistByUserId({ data: { userId: user!.id } }), enabled: !!user?.id, staleTime: 0 });
+  const artist = linkedArtist || allArtists?.find((a: any) => a.email === user?.email);
   const { data: artworks } = useQuery({ queryKey: ["artworks","artist",artist?.id], queryFn: () => getArtworksByArtist({ data: { artistId: artist!.id } }), enabled: !!artist?.id });
   const { data: exhibitions } = useQuery({ queryKey: ["exhibitions","artist",artist?.id], queryFn: () => getExhibitionsByArtist({ data: { artistId: artist!.id } }), enabled: !!artist?.id });
 

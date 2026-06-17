@@ -74,3 +74,11 @@ export const deleteArtist = createServerFn({ method: "POST" })
     const db = getDb();
     await db.update(artists).set({ status: "DELETED" }).where(eq(artists.id, data.id));
   });
+
+export const getArtistByUserId = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ userId: z.number() }))
+  .handler(async ({ data }) => {
+    const db = getDb();
+    const [artist] = await db.select().from(artists).where(eq(artists.userId, data.userId));
+    return artist ?? null;
+  });
