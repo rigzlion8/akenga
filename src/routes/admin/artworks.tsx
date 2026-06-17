@@ -46,7 +46,7 @@ function AdminArtworks() {
   const { data: list } = useQuery({ queryKey: ["artworks", "admin"], queryFn: () => getArtworks() });
   const { data: artistList } = useQuery({ queryKey: ["artists"], queryFn: () => getAllArtists() });
 
-  const { register, handleSubmit, reset, setValue, watch, control, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, reset, setValue, watch, getValues, control, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { images: [], isForSale: false, featured: false },
   });
@@ -78,11 +78,13 @@ function AdminArtworks() {
   const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files; if (!files) return;
     setUploading(true);
-    const cur = images;
+    const uploaded: string[] = [];
     for (const f of Array.from(files)) {
-      try { const url = await uploadImage(f); cur.push(url); } catch { toast.error(`Failed: ${f.name}`); }
+      try { const url = await uploadImage(f); uploaded.push(url); } catch { toast.error(`Failed: ${f.name}`); }
     }
-    setValue("images", [...cur]);
+    // Read current images from form state to avoid stale closure
+    const current = getValues("images") || [];
+    setValue("images", [...current, ...uploaded]);
     setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
   };
