@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { eq, ne, sql } from "drizzle-orm";
+import { eq, ne, and } from "drizzle-orm";
 import { getDb } from "../../db";
-import { artworks } from "../../db/schema";
+import { artworks, products } from "../../db/schema";
 
 export const getArtworks = createServerFn({ method: "GET" })
   .handler(async () => {
@@ -21,8 +21,7 @@ export const getArtworksByArtist = createServerFn({ method: "GET" })
     return db
       .select()
       .from(artworks)
-      .where(eq(artworks.artistId, data.artistId))
-      .where(ne(artworks.status, "DELETED"))
+      .where(and(eq(artworks.artistId, data.artistId), ne(artworks.status, "DELETED")))
       .orderBy(artworks.createdAt);
   });
 
@@ -41,19 +40,15 @@ export const getArtworkByPublicId = createServerFn({ method: "GET" })
 export const getDailyArtworks = createServerFn({ method: "GET" })
   .handler(async () => {
     const db = getDb();
-    // Seed-based daily rotation: use current date as seed for deterministic "random"
     const daySeed = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const hash = Array.from(daySeed).reduce((acc, c) => acc + c.charCodeAt(0), 0);
 
     const all = await db
       .select()
       .from(artworks)
-      .where(ne(artworks.status, "DELETED"))
-      .where(eq(artworks.featured, true));
+      .where(and(ne(artworks.status, "DELETED"), eq(artworks.featured, true)));
 
-    // If we have featured artworks, return those; otherwise fall back to recent
     if (all.length > 0) {
-      // Deterministic shuffle based on day seed
       const shuffled = [...all].sort((a, b) => {
         const ha = (a.id * hash) % 97;
         const hb = (b.id * hash) % 97;
@@ -62,7 +57,6 @@ export const getDailyArtworks = createServerFn({ method: "GET" })
       return shuffled.slice(0, 8);
     }
 
-    // Fallback: recent artworks
     return db
       .select()
       .from(artworks)
@@ -87,11 +81,57 @@ const artworkSchema = z.object({
   featured: z.boolean().optional(),
 });
 
+async function syncProduct(db: ReturnType<typeof getDb>, artwork: any, productId: number | null) {
+  if (artwork.isForSale && artwork.price) {
+    const productData = {
+      name: artwork.title,
+      category: artwork.category || "Art",
+      tag: artwork.tag || null,
+      price: artwork.price,
+      description: artwork.description || null,
+      images: artwork.images || [],
+      inStock: true,
+    };
+
+    if (productId) {
+      // Update existing product
+      await db.update(products).set(productData as any).where(eq(products.id, productId));
+      return productId;
+    } else {
+      // Create new product
+      const [product] = await db.insert(products).values(productData as any).returning();
+      return product.id;
+    }
+  } else if (productId) {
+    // Artwork no longer for sale — soft-delete the product
+    await db.update(products).set({ status: "DELETED" }).where(eq(products.id, productId));
+    return null;
+  }
+  return productId;
+}
+
 export const createArtwork = createServerFn({ method: "POST" })
   .inputValidator(artworkSchema)
   .handler(async ({ data }) => {
     const db = getDb();
     const [artwork] = await db.insert(artworks).values(data as any).returning();
+
+    // If for sale, create linked product
+    if (artwork.isForSale && artwork.price) {
+      const productData = {
+        name: artwork.title,
+        category: artwork.category || "Art",
+        tag: artwork.tag || null,
+        price: artwork.price,
+        description: artwork.description || null,
+        images: artwork.images || [],
+        inStock: true,
+      };
+      const [product] = await db.insert(products).values(productData as any).returning();
+      await db.update(artworks).set({ productId: product.id }).where(eq(artworks.id, artwork.id));
+      artwork.productId = product.id;
+    }
+
     return artwork;
   });
 
@@ -100,11 +140,24 @@ export const updateArtwork = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { id, ...values } = data;
     const db = getDb();
+
+    // Get existing artwork to compare
+    const [existing] = await db.select().from(artworks).where(eq(artworks.id, id));
+    if (!existing) throw new Error("Artwork not found");
+
     const [artwork] = await db
       .update(artworks)
       .set(values as any)
       .where(eq(artworks.id, id))
       .returning();
+
+    // Sync linked product
+    const newProductId = await syncProduct(db, artwork, existing.productId);
+    if (newProductId !== existing.productId) {
+      await db.update(artworks).set({ productId: newProductId }).where(eq(artworks.id, id));
+      artwork.productId = newProductId;
+    }
+
     return artwork;
   });
 
@@ -112,6 +165,13 @@ export const deleteArtwork = createServerFn({ method: "POST" })
   .inputValidator(z.object({ id: z.number() }))
   .handler(async ({ data }) => {
     const db = getDb();
+    const [artwork] = await db.select().from(artworks).where(eq(artworks.id, data.id));
+
+    // Soft-delete linked product
+    if (artwork?.productId) {
+      await db.update(products).set({ status: "DELETED" }).where(eq(products.id, artwork.productId));
+    }
+
     await db.update(artworks).set({ status: "DELETED" }).where(eq(artworks.id, data.id));
   });
 
