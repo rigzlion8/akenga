@@ -10,7 +10,7 @@ export const getArtworks = createServerFn({ method: "GET" })
     return db
       .select()
       .from(artworks)
-      .where(ne(artworks.status, "DELETED"))
+      .where(and(ne(artworks.status, "DELETED"), eq(artworks.approvalStatus, "APPROVED")))
       .orderBy(artworks.createdAt);
   });
 
@@ -46,7 +46,7 @@ export const getDailyArtworks = createServerFn({ method: "GET" })
     const all = await db
       .select()
       .from(artworks)
-      .where(and(ne(artworks.status, "DELETED"), eq(artworks.featured, true)));
+      .where(and(ne(artworks.status, "DELETED"), eq(artworks.featured, true), eq(artworks.approvalStatus, "APPROVED")));
 
     if (all.length > 0) {
       const shuffled = [...all].sort((a, b) => {
@@ -79,6 +79,7 @@ const artworkSchema = z.object({
   price: z.string().optional(),
   productId: z.number().nullable().optional(),
   featured: z.boolean().optional(),
+  approvalStatus: z.string().optional(),
 });
 
 async function syncProduct(db: ReturnType<typeof getDb>, artwork: any, productId: number | null) {

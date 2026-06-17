@@ -58,6 +58,7 @@ export const exhibitions = pgTable("exhibitions", {
   isLive: boolean("is_live").default(false),
   featured: boolean("featured").default(false),
   status: text("status").default("ACTIVE"),
+  approvalStatus: text("approval_status").default("APPROVED"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -124,6 +125,7 @@ export const artworks = pgTable("artworks", {
   productId: integer("product_id").references(() => products.id),
   featured: boolean("featured").default(false),
   status: text("status").default("ACTIVE"),
+  approvalStatus: text("approval_status").default("APPROVED"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

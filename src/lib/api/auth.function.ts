@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
-import { users } from "../../db/schema";
+import { users, artists } from "../../db/schema";
 import { hashPassword, verifyPassword, generateToken } from "../auth";
 import { sendEmail, renderActivationEmail, renderResetEmail } from "../email";
 
@@ -105,6 +105,7 @@ export const register = createServerFn({ method: "POST" })
       email: z.string().email(),
       name: z.string().min(1),
       password: z.string().min(6),
+      role: z.enum(["user", "artist"]).optional().default("user"),
     }),
   )
   .handler(async ({ data }) => {
@@ -124,7 +125,7 @@ export const register = createServerFn({ method: "POST" })
       .values({
         email: data.email,
         name: data.name,
-        role: "user",
+        role: data.role || "user",
         passwordHash: hashPassword(data.password),
         activationToken,
         activated: false,
@@ -136,6 +137,15 @@ export const register = createServerFn({ method: "POST" })
         role: users.role,
         createdAt: users.createdAt,
       });
+
+    // If registering as artist, auto-create artist profile
+    if (data.role === "artist") {
+      await db.insert(artists).values({
+        name: data.name,
+        email: data.email,
+        userId: user.id,
+      });
+    }
 
     const activationUrl = `${process.env.APP_URL || "http://localhost:3000"}/activate?token=${activationToken}`;
 

@@ -7,7 +7,7 @@ import { exhibitions } from "../../db/schema";
 export const getExhibitions = createServerFn({ method: "GET" })
   .handler(async () => {
     const db = getDb();
-    return db.select().from(exhibitions).where(ne(exhibitions.status, "DELETED")).orderBy(exhibitions.startDate);
+    return db.select().from(exhibitions).where(and(ne(exhibitions.status, "DELETED"), eq(exhibitions.approvalStatus, "APPROVED"))).orderBy(exhibitions.startDate);
   });
 
 export const getExhibitionsByArtist = createServerFn({ method: "GET" })
@@ -29,7 +29,7 @@ export const getExhibitionByPublicId = createServerFn({ method: "GET" })
 export const getLiveExhibitions = createServerFn({ method: "GET" })
   .handler(async () => {
     const db = getDb();
-    return db.select().from(exhibitions).where(and(eq(exhibitions.isLive, true), ne(exhibitions.status, "DELETED"))).orderBy(exhibitions.startDate);
+    return db.select().from(exhibitions).where(and(eq(exhibitions.isLive, true), ne(exhibitions.status, "DELETED"), eq(exhibitions.approvalStatus, "APPROVED"))).orderBy(exhibitions.startDate);
   });
 
 const schema = z.object({
@@ -39,7 +39,7 @@ const schema = z.object({
   ticketType: z.enum(["FREE", "PAID", "BUNDLE"]).optional(), ticketPrice: z.string().optional(),
   ticketUrl: z.string().optional(), guestAppearances: z.string().optional(),
   tag: z.string().optional(), imageUrl: z.string().optional(), images: z.array(z.string()).optional(),
-  isLive: z.boolean().optional(), featured: z.boolean().optional(),
+  isLive: z.boolean().optional(), featured: z.boolean().optional(), approvalStatus: z.string().optional(),
 });
 
 export const createExhibition = createServerFn({ method: "POST" }).inputValidator(schema)

@@ -16,6 +16,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ExhibitionsRouteImport } from './routes/exhibitions'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ClassesRouteImport } from './routes/classes'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
@@ -74,6 +75,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const ExhibitionsRoute = ExhibitionsRouteImport.update({
   id: '/exhibitions',
   path: '/exhibitions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClassesRoute = ClassesRouteImport.update({
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
+  '/dashboard': typeof DashboardRoute
   '/exhibitions': typeof ExhibitionsRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
+  '/dashboard': typeof DashboardRoute
   '/exhibitions': typeof ExhibitionsRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/classes'
+    | '/dashboard'
     | '/exhibitions'
     | '/forgot-password'
     | '/login'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/classes'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/register'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/classes'
+    | '/dashboard'
     | '/exhibitions'
     | '/forgot-password'
     | '/login'
@@ -397,6 +409,7 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
   ClassesRoute: typeof ClassesRoute
+  DashboardRoute: typeof DashboardRoute
   ExhibitionsRoute: typeof ExhibitionsRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -456,6 +469,13 @@ declare module '@tanstack/react-router' {
       path: '/exhibitions'
       fullPath: '/exhibitions'
       preLoaderRoute: typeof ExhibitionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/classes': {
@@ -714,6 +734,7 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
   ClassesRoute: ClassesRoute,
+  DashboardRoute: DashboardRoute,
   ExhibitionsRoute: ExhibitionsRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
