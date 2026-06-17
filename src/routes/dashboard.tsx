@@ -157,7 +157,7 @@ function EditProfile({ artist, qc }: { artist: any; qc: any }) {
     <Sheet open={open} onOpenChange={handleOpen}>
       <SheetTrigger asChild><Button variant="outline" size="sm"><Pencil className="h-3.5 w-3.5 mr-1"/>Edit Profile</Button></SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto"><SheetHeader className="mb-6"><SheetTitle>Edit Profile</SheetTitle></SheetHeader>
-        <form onSubmit={handleSubmit(async(d)=>{setSubmitting(true);try{const updated = await updateArtist({data:{...d,id:artist.id}});toast.success("Saved");qc.setQueryData(["allArtists"], (old: any) => old ? old.map((a: any) => a.id === artist.id ? { ...a, ...d, profileVisible: d.profileVisible } : a) : old);setOpen(false)}catch{toast.error("Failed")}finally{setSubmitting(false)}})} className="space-y-4">
+        <form onSubmit={handleSubmit(async(d)=>{setSubmitting(true);try{await updateArtist({data:{...d,id:artist.id}});toast.success("Saved");qc.invalidateQueries({queryKey:["allArtists"]});qc.invalidateQueries({queryKey:["artistByUser"]});setOpen(false)}catch{toast.error("Failed")}finally{setSubmitting(false)}})} className="space-y-4">
           <div><Label>Name *</Label><Input {...register("name")}/></div>
           <div><Label>Nationality</Label><Input {...register("nationality")}/></div>
           <div><Label>Website</Label><Input {...register("website")}/></div>
