@@ -104,6 +104,7 @@ export const artists = pgTable("artists", {
   twitter: text("twitter"),
   userId: integer("user_id").references(() => users.id),
   status: text("status").default("ACTIVE"),
+  profileVisible: boolean("profile_visible").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -18,7 +18,7 @@ type AW = z.infer<typeof awSchema>;
 const exSchema = z.object({ title: z.string().min(1), description: z.string().optional(), startDate: z.string().optional(), endDate: z.string().optional(), location: z.string().optional(), venue: z.string().optional(), ticketType: z.enum(["FREE","PAID","BUNDLE"]).optional(), ticketPrice: z.string().optional(), ticketUrl: z.string().optional(), guestAppearances: z.string().optional(), images: z.array(z.string()).optional() });
 type EX = z.infer<typeof exSchema>;
 
-const artistSchema = z.object({ name: z.string().min(1), bio: z.string().optional(), nationality: z.string().optional(), website: z.string().optional(), instagram: z.string().optional(), tiktok: z.string().optional(), twitter: z.string().optional(), profileImage: z.string().optional() });
+const artistSchema = z.object({ name: z.string().min(1), bio: z.string().optional(), nationality: z.string().optional(), website: z.string().optional(), instagram: z.string().optional(), tiktok: z.string().optional(), twitter: z.string().optional(), profileImage: z.string().optional(), profileVisible: z.boolean().optional() });
 type AF = z.infer<typeof artistSchema>;
 
 export const Route = createFileRoute("/dashboard")({
@@ -120,6 +120,7 @@ function EditProfile({ artist, qc }: { artist: any; qc: any }) {
           <div><Label>X (Twitter)</Label><Input {...register("twitter")}/></div>
           <div><Label>Profile Image</Label><div className="flex gap-2 mt-1"><Input className="flex-1" {...register("profileImage")} placeholder="URL or upload"/><Button type="button" variant="outline" size="icon" disabled={uploading} onClick={()=>fr.current?.click()}><Upload className="h-4 w-4"/></Button><input ref={fr} type="file" accept="image/*" className="hidden" onChange={async e=>{const f=e.target.files?.[0];if(!f)return;setUploading(true);try{setValue("profileImage",await u(f))}catch{toast.error("Upload failed")}finally{setUploading(false)}}}/></div>{img&&<img src={img} alt="" className="w-16 h-16 object-cover rounded-lg mt-2"/>}</div>
           <div><Label>Bio</Label><Textarea {...register("bio")} rows={4}/></div>
+          <div className="flex items-center justify-between"><Label>Profile Visibility</Label><Switch checked={watch("profileVisible")} onCheckedChange={v => setValue("profileVisible", v)} /><p className="text-[0.6rem] text-muted-foreground -mt-1">Show my artist profile publicly</p></div>
           <Button type="submit" className="w-full" disabled={submitting}>{submitting&&<Loader2 className="h-4 w-4 mr-2 animate-spin"/>}Save</Button>
         </form></SheetContent></Sheet>
   );

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { eq, ne } from "drizzle-orm";
+import { eq, ne, and } from "drizzle-orm";
 import { getDb } from "../../db";
 import { artists } from "../../db/schema";
 
@@ -10,7 +10,7 @@ export const getArtists = createServerFn({ method: "GET" })
     return db
       .select()
       .from(artists)
-      .where(ne(artists.status, "DELETED"))
+      .where(and(ne(artists.status, "DELETED"), eq(artists.profileVisible, true)))
       .orderBy(artists.name);
   });
 
@@ -42,6 +42,7 @@ const artistSchema = z.object({
   instagram: z.string().optional(),
   tiktok: z.string().optional(),
   twitter: z.string().optional(),
+  profileVisible: z.boolean().optional(),
   userId: z.number().nullable().optional(),
 });
 
