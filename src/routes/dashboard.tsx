@@ -36,23 +36,25 @@ function Dashboard() {
 
   const handleLogout = () => { logout(); localStorage.removeItem("auth_token"); localStorage.removeItem("auth_user"); window.location.href = "/"; };
 
-  if (userLoading) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground text-sm">Loading...</p></div>;
+  if (userLoading || artistsLoading) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground text-sm">Loading...</p></div>;
   if (!user) return <div className="min-h-screen flex items-center justify-center pt-20"><p className="text-muted-foreground">Please <Link to="/login" className="text-accent">sign in</Link>.</p></div>;
 
   // User dashboard (no artist profile)
   if (!artist) {
+    const isArtistRole = user.role === "artist";
     return (
       <div className="min-h-screen pt-24 pb-16 max-w-2xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-serif text-2xl md:text-3xl">Welcome, {user.name}</h1>
             <p className="text-xs text-muted-foreground mt-1">{user.email}</p>
+            {isArtistRole && <p className="text-xs text-amber-400 mt-1">Artist account — no profile linked yet. Contact admin.</p>}
           </div>
           <Button variant="ghost" size="icon" onClick={handleLogout}><LogOut className="h-4 w-4"/></Button>
         </div>
         <div className="rounded-xl border border-border p-8 text-center space-y-4">
           <div className="w-12 h-12 rounded-full bg-muted mx-auto flex items-center justify-center"><User className="h-6 w-6 text-muted-foreground"/></div>
-          <p className="text-sm text-muted-foreground">You're signed in as a regular user.</p>
+          <p className="text-sm text-muted-foreground">{isArtistRole ? "Your artist profile isn't set up yet. An admin can link it for you." : "You're signed in as a regular user."}</p>
           <div className="flex justify-center gap-4">
             <Link to="/shop" className="text-xs tracking-[0.2em] uppercase text-accent hover:underline">Browse Shop</Link>
             <Link to="/classes" className="text-xs tracking-[0.2em] uppercase text-accent hover:underline">Classes</Link>
