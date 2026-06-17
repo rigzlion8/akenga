@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "../../db";
 import { users, artists } from "../../db/schema";
 import { hashPassword, verifyPassword, generateToken } from "../auth";
-import { sendEmail, renderActivationEmail, renderResetEmail } from "../email";
+import { sendEmail, renderActivationEmail, renderResetEmail, renderArtistActivationEmail } from "../email";
 
 const userSelect = {
   id: users.id,
@@ -149,11 +149,11 @@ export const register = createServerFn({ method: "POST" })
 
     const activationUrl = `${process.env.APP_URL || "http://localhost:3000"}/activate?token=${activationToken}`;
 
-    await sendEmail(
-      data.email,
-      "Activate your Akenga Arts Centre account",
-      renderActivationEmail(data.name, activationUrl),
-    );
+    if (data.role === "artist") {
+      await sendEmail(data.email, "Complete your artist profile — Akenga Arts Centre", renderArtistActivationEmail(data.name, activationUrl));
+    } else {
+      await sendEmail(data.email, "Activate your Akenga Arts Centre account", renderActivationEmail(data.name, activationUrl));
+    }
 
     return { user };
   });
@@ -163,7 +163,7 @@ export const activateAccount = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const db = getDb();
     const [found] = await db
-      .select({ id: users.id, email: users.email, name: users.name })
+      .select({ id: users.id, email: users.email, name: users.name, role: users.role })
       .from(users)
       .where(eq(users.activationToken, data.token));
 
@@ -176,7 +176,7 @@ export const activateAccount = createServerFn({ method: "POST" })
       .where(eq(users.id, found.id));
 
     return {
-      user: { id: found.id, email: found.email, name: found.name },
+      user: { id: found.id, email: found.email, name: found.name, role: found.role },
       token: sessionToken,
     };
   });

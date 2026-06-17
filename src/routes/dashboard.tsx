@@ -53,6 +53,20 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Welcome banner for incomplete profiles */}
+      {(!artist.bio && !artist.profileImage) && (
+        <div className="mb-8 p-5 rounded-xl border border-accent/30 bg-accent/5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+          <div>
+            <p className="font-serif text-lg">Welcome, {artist.name}!</p>
+            <p className="text-sm text-muted-foreground mt-1">Complete your artist profile to start uploading artworks and creating exhibitions.</p>
+          </div>
+          <div className="flex gap-3 shrink-0">
+            <EditProfile artist={artist} qc={qc} />
+            <Button variant="outline" size="sm" asChild><Link to="/shop">Browse Shop</Link></Button>
+          </div>
+        </div>
+      )}
+
       {/* Artworks section */}
       <Section title="My Artworks" count={artworks?.length} createLabel="Add Artwork" qc={qc} artistId={artist.id}>
         <AddArtwork artistId={artist.id} qc={qc} />

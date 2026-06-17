@@ -80,3 +80,27 @@ export function renderResetEmail(name: string, resetUrl: string) {
     </div>
   `;
 }
+
+export function renderArtistActivationEmail(name: string, activationUrl: string) {
+  return `
+    <div style="font-family:Inter,system-ui,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#0a0a0a;color:#e0e0e0">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="display:inline-block;width:48px;height:48px;border-radius:50%;border:2px solid #c8a45c;line-height:44px;font-family:Georgia,serif;font-size:22px;color:#c8a45c">A</div>
+      </div>
+      <h2 style="font-family:Georgia,serif;font-size:24px;color:#f5f5f5;margin:0 0 8px">Welcome, ${name}</h2>
+      <p style="font-size:14px;line-height:1.6;color:#a0a0a0;margin:0 0 24px">
+        Your artist account on Akenga Arts Centre is almost ready. Complete your profile to upload artworks, set up exhibitions, and share your practice with the world.
+      </p>
+      <div style="text-align:center;margin-bottom:32px">
+        <a href="${activationUrl}" style="display:inline-block;padding:12px 32px;background:#c8a45c;color:#0a0a0a;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;border-radius:4px">Complete Your Profile</a>
+      </div>
+      <p style="font-size:12px;color:#666;margin:0">
+        If you did not create this account, you can safely ignore this email.
+      </p>
+      <hr style="border:none;border-top:1px solid #222;margin:24px 0" />
+      <p style="font-size:11px;color:#555;text-align:center">
+        Akenga Arts Centre · Hurlingham, Nairobi
+      </p>
+    </div>
+  `;
+}
