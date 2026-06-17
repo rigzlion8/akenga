@@ -186,6 +186,7 @@ function SiteHeader() {
     { to: "/" as const, label: "Home", exact: true },
     { to: "/studio" as const, label: "Studio" },
     { to: "/artists" as const, label: "Artists" },
+    { to: "/exhibitions" as const, label: "Exhibitions" },
     { to: "/classes" as const, label: "Classes" },
     { to: "/shop" as const, label: "Shop" },
   ];

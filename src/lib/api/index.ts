@@ -7,3 +7,4 @@ export { getUsers, createUser, updateUser, deleteUser, resetUserPassword } from 
 export { createOrder, getOrders } from "./orders.function";
 export { getArtists, getAllArtists, getArtistByPublicId, createArtist, updateArtist, deleteArtist } from "./artists.function";
 export { getArtworks, getArtworksByArtist, getArtworkByPublicId, getDailyArtworks, createArtwork, updateArtwork, deleteArtwork, toggleFeatured } from "./artworks.function";
+export { getExhibitions, getExhibitionsByArtist, getExhibitionByPublicId, getLiveExhibitions, createExhibition, updateExhibition, deleteExhibition } from "./exhibitions.function";

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Globe, Mail } from "lucide-react";
 import { getArtistByPublicId, getArtworksByArtist } from "@/lib/api";
+import { getExhibitionsByArtist } from "@/lib/api";
 
 export const Route = createFileRoute("/artists/$publicId")({
   head: () => ({ meta: [{ title: "Artist — Akenga Arts Centre" }] }),
@@ -22,6 +23,12 @@ function ArtistProfile() {
   const { data: artworks } = useQuery({
     queryKey: ["artworks", "artist", artist?.id],
     queryFn: () => getArtworksByArtist({ data: { artistId: artist!.id } }),
+    enabled: !!artist?.id,
+  });
+
+  const { data: exhibitions } = useQuery({
+    queryKey: ["exhibitions", "artist", artist?.id],
+    queryFn: () => getExhibitionsByArtist({ data: { artistId: artist!.id } }),
     enabled: !!artist?.id,
   });
 
@@ -214,6 +221,35 @@ function ArtistProfile() {
                     {aw.isForSale && aw.price && (
                       <p className="text-xs text-accent mt-1.5">{aw.price}</p>
                     )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Exhibitions */}
+      {exhibitions && exhibitions.length > 0 && (
+        <section className="max-w-7xl mx-auto px-6 lg:px-10 pb-16">
+          <div className="border-t border-border/60 pt-12">
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <p className="eyebrow">Exhibitions</p>
+                <h2 className="font-serif text-2xl md:text-3xl mt-2">Shows ({exhibitions.length})</h2>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {exhibitions.map((ex: any) => (
+                <Link key={ex.id} to="/exhibitions/$publicId" params={{ publicId: ex.publicId }} className="group block">
+                  <div className="aspect-[16/9] overflow-hidden bg-muted rounded-xl border border-border">
+                    <img src={ex.images?.[0] ?? ex.imageUrl ?? ""} alt={ex.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  </div>
+                  <h3 className="font-serif text-lg mt-3 group-hover:text-accent transition-colors">{ex.title}</h3>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+                    {ex.venue && <span className="text-[0.6rem] tracking-[0.15em] uppercase text-muted-foreground">{ex.venue}</span>}
+                    {ex.startDate && <span className="text-[0.6rem] tracking-[0.15em] uppercase text-muted-foreground">{ex.startDate}</span>}
+                    {ex.ticketType && <span className="text-[0.6rem] tracking-[0.15em] uppercase text-muted-foreground">{ex.ticketType === "FREE" ? "Free" : ex.ticketPrice || "Paid"}</span>}
                   </div>
                 </Link>
               ))}

@@ -13,6 +13,7 @@ import { Route as StudioRouteImport } from './routes/studio'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ExhibitionsRouteImport } from './routes/exhibitions'
 import { Route as ClassesRouteImport } from './routes/classes'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
@@ -21,6 +22,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ActivateRouteImport } from './routes/activate'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopIndexRouteImport } from './routes/shop/index'
+import { Route as ExhibitionsIndexRouteImport } from './routes/exhibitions/index'
 import { Route as ArtistsIndexRouteImport } from './routes/artists/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ShopPublicIdRouteImport } from './routes/shop/$publicId'
@@ -28,6 +30,7 @@ import { Route as ArtworksPublicIdRouteImport } from './routes/artworks/$publicI
 import { Route as ArtistsPublicIdRouteImport } from './routes/artists/$publicId'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminExhibitionsRouteImport } from './routes/admin/exhibitions'
 import { Route as AdminClassesRouteImport } from './routes/admin/classes'
 import { Route as AdminCategoriesRouteImport } from './routes/admin/categories'
 import { Route as AdminArtworksRouteImport } from './routes/admin/artworks'
@@ -53,6 +56,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExhibitionsRoute = ExhibitionsRouteImport.update({
+  id: '/exhibitions',
+  path: '/exhibitions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClassesRoute = ClassesRouteImport.update({
@@ -95,6 +103,11 @@ const ShopIndexRoute = ShopIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ShopRoute,
 } as any)
+const ExhibitionsIndexRoute = ExhibitionsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ExhibitionsRoute,
+} as any)
 const ArtistsIndexRoute = ArtistsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -128,6 +141,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 const AdminProductsRoute = AdminProductsRouteImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExhibitionsRoute = AdminExhibitionsRouteImport.update({
+  id: '/exhibitions',
+  path: '/exhibitions',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminClassesRoute = AdminClassesRouteImport.update({
@@ -169,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
+  '/exhibitions': typeof ExhibitionsRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRouteWithChildren
@@ -177,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/admin/artworks': typeof AdminArtworksRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/classes': typeof AdminClassesRoute
+  '/admin/exhibitions': typeof AdminExhibitionsRoute
   '/admin/products': typeof AdminProductsRouteWithChildren
   '/admin/users': typeof AdminUsersRoute
   '/artists/$publicId': typeof ArtistsPublicIdRoute
@@ -184,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin/': typeof AdminIndexRoute
   '/artists/': typeof ArtistsIndexRoute
+  '/exhibitions/': typeof ExhibitionsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/admin/products/$publicId': typeof AdminProductsPublicIdRoute
   '/admin/products/': typeof AdminProductsIndexRoute
@@ -201,12 +222,14 @@ export interface FileRoutesByTo {
   '/admin/artworks': typeof AdminArtworksRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/classes': typeof AdminClassesRoute
+  '/admin/exhibitions': typeof AdminExhibitionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/artists/$publicId': typeof ArtistsPublicIdRoute
   '/artworks/$publicId': typeof ArtworksPublicIdRoute
   '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin': typeof AdminIndexRoute
   '/artists': typeof ArtistsIndexRoute
+  '/exhibitions': typeof ExhibitionsIndexRoute
   '/shop': typeof ShopIndexRoute
   '/admin/products/$publicId': typeof AdminProductsPublicIdRoute
   '/admin/products': typeof AdminProductsIndexRoute
@@ -220,6 +243,7 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/classes': typeof ClassesRoute
+  '/exhibitions': typeof ExhibitionsRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRouteWithChildren
@@ -228,6 +252,7 @@ export interface FileRoutesById {
   '/admin/artworks': typeof AdminArtworksRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/classes': typeof AdminClassesRoute
+  '/admin/exhibitions': typeof AdminExhibitionsRoute
   '/admin/products': typeof AdminProductsRouteWithChildren
   '/admin/users': typeof AdminUsersRoute
   '/artists/$publicId': typeof ArtistsPublicIdRoute
@@ -235,6 +260,7 @@ export interface FileRoutesById {
   '/shop/$publicId': typeof ShopPublicIdRoute
   '/admin/': typeof AdminIndexRoute
   '/artists/': typeof ArtistsIndexRoute
+  '/exhibitions/': typeof ExhibitionsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/admin/products/$publicId': typeof AdminProductsPublicIdRoute
   '/admin/products/': typeof AdminProductsIndexRoute
@@ -249,6 +275,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/classes'
+    | '/exhibitions'
     | '/login'
     | '/register'
     | '/shop'
@@ -257,6 +284,7 @@ export interface FileRouteTypes {
     | '/admin/artworks'
     | '/admin/categories'
     | '/admin/classes'
+    | '/admin/exhibitions'
     | '/admin/products'
     | '/admin/users'
     | '/artists/$publicId'
@@ -264,6 +292,7 @@ export interface FileRouteTypes {
     | '/shop/$publicId'
     | '/admin/'
     | '/artists/'
+    | '/exhibitions/'
     | '/shop/'
     | '/admin/products/$publicId'
     | '/admin/products/'
@@ -281,12 +310,14 @@ export interface FileRouteTypes {
     | '/admin/artworks'
     | '/admin/categories'
     | '/admin/classes'
+    | '/admin/exhibitions'
     | '/admin/users'
     | '/artists/$publicId'
     | '/artworks/$publicId'
     | '/shop/$publicId'
     | '/admin'
     | '/artists'
+    | '/exhibitions'
     | '/shop'
     | '/admin/products/$publicId'
     | '/admin/products'
@@ -299,6 +330,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/classes'
+    | '/exhibitions'
     | '/login'
     | '/register'
     | '/shop'
@@ -307,6 +339,7 @@ export interface FileRouteTypes {
     | '/admin/artworks'
     | '/admin/categories'
     | '/admin/classes'
+    | '/admin/exhibitions'
     | '/admin/products'
     | '/admin/users'
     | '/artists/$publicId'
@@ -314,6 +347,7 @@ export interface FileRouteTypes {
     | '/shop/$publicId'
     | '/admin/'
     | '/artists/'
+    | '/exhibitions/'
     | '/shop/'
     | '/admin/products/$publicId'
     | '/admin/products/'
@@ -327,6 +361,7 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
   ClassesRoute: typeof ClassesRoute
+  ExhibitionsRoute: typeof ExhibitionsRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   ShopRoute: typeof ShopRouteWithChildren
@@ -362,6 +397,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exhibitions': {
+      id: '/exhibitions'
+      path: '/exhibitions'
+      fullPath: '/exhibitions'
+      preLoaderRoute: typeof ExhibitionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/classes': {
@@ -420,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopIndexRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/exhibitions/': {
+      id: '/exhibitions/'
+      path: '/'
+      fullPath: '/exhibitions/'
+      preLoaderRoute: typeof ExhibitionsIndexRouteImport
+      parentRoute: typeof ExhibitionsRoute
+    }
     '/artists/': {
       id: '/artists/'
       path: '/'
@@ -467,6 +516,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/admin/products'
       preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/exhibitions': {
+      id: '/admin/exhibitions'
+      path: '/exhibitions'
+      fullPath: '/admin/exhibitions'
+      preLoaderRoute: typeof AdminExhibitionsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/classes': {
@@ -533,6 +589,7 @@ interface AdminRouteChildren {
   AdminArtworksRoute: typeof AdminArtworksRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminClassesRoute: typeof AdminClassesRoute
+  AdminExhibitionsRoute: typeof AdminExhibitionsRoute
   AdminProductsRoute: typeof AdminProductsRouteWithChildren
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -543,6 +600,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminArtworksRoute: AdminArtworksRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminClassesRoute: AdminClassesRoute,
+  AdminExhibitionsRoute: AdminExhibitionsRoute,
   AdminProductsRoute: AdminProductsRouteWithChildren,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -562,6 +620,18 @@ const ArtistsRouteChildren: ArtistsRouteChildren = {
 
 const ArtistsRouteWithChildren =
   ArtistsRoute._addFileChildren(ArtistsRouteChildren)
+
+interface ExhibitionsRouteChildren {
+  ExhibitionsIndexRoute: typeof ExhibitionsIndexRoute
+}
+
+const ExhibitionsRouteChildren: ExhibitionsRouteChildren = {
+  ExhibitionsIndexRoute: ExhibitionsIndexRoute,
+}
+
+const ExhibitionsRouteWithChildren = ExhibitionsRoute._addFileChildren(
+  ExhibitionsRouteChildren,
+)
 
 interface ShopRouteChildren {
   ShopPublicIdRoute: typeof ShopPublicIdRoute
@@ -583,6 +653,7 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
   ClassesRoute: ClassesRoute,
+  ExhibitionsRoute: ExhibitionsRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   ShopRoute: ShopRouteWithChildren,
