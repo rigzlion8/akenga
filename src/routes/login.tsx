@@ -41,7 +41,9 @@ function SignIn() {
       toast.success("Welcome back");
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get("redirect");
-      navigate({ to: redirect || "/admin" } as any);
+      const role = result.user.role;
+      const defaultTo = role === "admin" ? "/admin" : role === "artist" ? "/dashboard" : "/shop";
+      navigate({ to: redirect || defaultTo } as any);
     } catch (e: any) {
       toast.error(e.message || "Invalid credentials");
     } finally {

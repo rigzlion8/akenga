@@ -167,9 +167,15 @@ function SiteHeader() {
   const mobileActiveClass = "text-accent bg-muted/50";
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    setLoggedIn(!!localStorage.getItem("auth_token"));
+    const token = localStorage.getItem("auth_token");
+    setLoggedIn(!!token);
+    try {
+      const u = localStorage.getItem("auth_user");
+      if (u) setUserData(JSON.parse(u));
+    } catch {}
   }, []);
 
   const { itemCount } = useCart();
@@ -178,6 +184,7 @@ function SiteHeader() {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
     setLoggedIn(false);
+    setUserData(null);
     setMobileOpen(false);
     window.location.href = "/";
   };
@@ -226,9 +233,14 @@ function SiteHeader() {
               </span>
             )}
           </Link>
-          {loggedIn && (
+          {loggedIn && userData?.role === "admin" && (
             <Link to="/admin" className={linkClass} activeProps={{ className: activeClass }}>
               Admin
+            </Link>
+          )}
+          {loggedIn && userData?.role !== "admin" && (
+            <Link to="/dashboard" className={linkClass} activeProps={{ className: activeClass }}>
+              Dashboard
             </Link>
           )}
           {!loggedIn && (
@@ -270,7 +282,7 @@ function SiteHeader() {
                   </span>
                 )}
               </Link>
-              {loggedIn && (
+              {loggedIn && userData?.role === "admin" && (
                 <>
                   <div className="my-2 border-t border-border/60" />
                   <Link
@@ -288,6 +300,15 @@ function SiteHeader() {
                     Sign Out
                   </button>
                 </>
+              )}
+              {loggedIn && userData?.role !== "admin" && (
+                <Link
+                  to="/dashboard"
+                  className={mobileLinkClass}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Dashboard
+                </Link>
               )}
               {!loggedIn && (
                 <Link

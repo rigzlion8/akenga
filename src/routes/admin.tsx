@@ -73,6 +73,11 @@ function AdminLayout() {
     return null;
   }
 
+  if (user.role !== "admin") {
+    window.location.href = user.role === "artist" ? "/dashboard" : "/shop";
+    return <div className="min-h-screen flex items-center justify-center bg-background"><p className="text-muted-foreground text-sm">Redirecting...</p></div>;
+  }
+
   const handleLogout = async () => {
     const token = localStorage.getItem("auth_token");
     if (token) {
