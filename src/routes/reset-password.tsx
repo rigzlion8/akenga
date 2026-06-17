@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod"; import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Lock, CheckCircle } from "lucide-react";
+import { Loader2, Lock, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { resetPassword } from "@/lib/api";
 
 const schema = z.object({
@@ -18,6 +18,23 @@ export const Route = createFileRoute("/reset-password")({
   validateSearch: (s: Record<string, unknown>) => ({ token: (s.token as string) || "" }),
   component: ResetPassword,
 });
+
+function PasswordInput({ id, label, placeholder, error, ...props }: any) {
+  const [show, setShow] = useState(false);
+  const { ref, ...rest } = props;
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <div className="relative">
+        <Input id={id} type={show ? "text" : "password"} placeholder={placeholder} className="pr-10" {...rest} />
+        <button type="button" onClick={() => setShow(!show)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
+      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+    </div>
+  );
+}
 
 function ResetPassword() {
   const { token } = useSearch({ from: "/reset-password" });
@@ -56,16 +73,8 @@ function ResetPassword() {
         {!done ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {error && <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-xs text-destructive">{error}</div>}
-            <div>
-              <Label htmlFor="password">New Password</Label>
-              <Input id="password" type="password" {...register("password")} placeholder="••••••" autoFocus />
-              {errors.password && <p className="text-xs text-destructive mt-1">{errors.password.message}</p>}
-            </div>
-            <div>
-              <Label htmlFor="confirm">Confirm Password</Label>
-              <Input id="confirm" type="password" {...register("confirm")} placeholder="••••••" />
-              {errors.confirm && <p className="text-xs text-destructive mt-1">{errors.confirm.message}</p>}
-            </div>
+            <PasswordInput id="password" label="New Password" placeholder="••••••" autoFocus {...register("password")} error={errors.password?.message} />
+            <PasswordInput id="confirm" label="Confirm Password" placeholder="••••••" {...register("confirm")} error={errors.confirm?.message} />
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Lock className="h-4 w-4 mr-2" />}
               Update Password
